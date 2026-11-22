@@ -1,0 +1,3020 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Файзи Расул — Android Опт (Молочная и мясная продукция)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#F0FDFA',
+                            100: '#CCFBF1',
+                            200: '#99F6E4',
+                            500: '#10B981',
+                            600: '#059669',
+                            700: '#0F766E',
+                            800: '#115E59',
+                            900: '#134E4A',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+            color: #0F172A;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Скроллбары */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #F1F5F9; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Анимации Material 3 */
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-m3 { animation: fadeSlideUp 0.22s cubic-bezier(0.2, 0, 0, 1) forwards; }
+
+        @keyframes thermalFeed {
+            0% { max-height: 0; opacity: 0.4; }
+            100% { max-height: 1200px; opacity: 1; }
+        }
+        .thermal-printing {
+            overflow: hidden;
+            animation: thermalFeed 0.9s ease-out forwards;
+        }
+
+        /* Зигзаг термочека */
+        .receipt-paper {
+            background: #FFFFFF;
+            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15);
+            position: relative;
+        }
+        .receipt-paper::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -6px;
+            height: 6px;
+            background: radial-gradient(circle at 6px 0, transparent 6px, #FFFFFF 6.5px) repeat-x;
+            background-size: 12px 6px;
+        }
+
+        /* Стили печати для чека и PDF-отчётов */
+        @media print {
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: #fff !important;
+                color: #000 !important;
+                padding: 8px !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col pb-20 lg:pb-0">
+
+    <!-- ==================== ВЕРХНЯЯ ПАНЕЛЬ (ANDROID APP BAR) ==================== -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6">
+            <div class="flex items-center justify-between h-16 gap-2">
+                <!-- Логотип -->
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-700 to-brand-600 text-white flex items-center justify-center shadow-sm shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        </svg>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-extrabold text-base sm:text-lg tracking-tight text-slate-900 truncate">ФАЙЗИ РАСУЛ</span>
+                            <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-brand-800 uppercase tracking-wider">Android</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 truncate hidden sm:block">Оптовая торговля • Молочная и мясная продукция</p>
+                    </div>
+                </div>
+
+                <!-- Статус Bluetooth, Подписки и Аккаунта -->
+                <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+                    <!-- Индикатор Bluetooth-принтера -->
+                    <button onclick="navigate('printer')" id="header-bt-btn"
+                        class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-semibold transition-all">
+                        <!-- Обновляется динамически -->
+                    </button>
+
+                    <!-- Переключатель аккаунта -->
+                    <button onclick="openAccountSwitcher()" id="header-user-btn"
+                        class="flex items-center gap-2 pl-2 pr-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-slate-200 transition-all text-left">
+                        <!-- Обновляется динамически -->
+                    </button>
+
+                    <!-- Сброс демо -->
+                    <button onclick="openResetModal()" title="Сбросить демо-данные"
+                        class="p-2 rounded-xl border border-slate-200 text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== БАННЕР ПОДПИСКИ (ПОКАЗЫВАЕТСЯ ПРИ СКОРОМ ОКОНЧАНИИ) ==================== -->
+    <div id="subscription-banner-wrap" class="max-w-7xl w-full mx-auto px-3 sm:px-6 pt-3 hidden"></div>
+
+    <!-- ==================== ОСНОВНАЯ РАБОЧАЯ ОБЛАСТЬ ==================== -->
+    <div class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4 flex gap-5">
+        <!-- Десктопное боковое меню (Android Navigation Rail / Drawer) -->
+        <aside id="desktop-nav" class="hidden lg:flex flex-col w-64 shrink-0 gap-1.5 sticky top-20 self-start"></aside>
+
+        <!-- Основной контент вкладки -->
+        <main id="app-main" class="flex-1 min-w-0 animate-m3">
+            <!-- Рендерится динамически -->
+        </main>
+    </div>
+
+    <!-- ==================== НИЖНЯЯ НАВИГАЦИЯ ДЛЯ МОБИЛЬНЫХ (ANDROID BOTTOM NAV) ==================== -->
+    <nav id="mobile-bottom-nav" class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-1 py-1.5 flex items-center justify-around shadow-lg">
+        <!-- Рендерится динамически -->
+    </nav>
+
+    <!-- ==================== МОДАЛЬНОЕ ОКНО ==================== -->
+    <div id="modal-backdrop" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div id="modal-container" class="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-2xl overflow-hidden animate-m3 my-auto max-h-[92vh] flex flex-col">
+            <!-- Динамический контент -->
+        </div>
+    </div>
+
+    <!-- ==================== ЗОНА ПЕЧАТИ (СКРЫТА НА ЭКРАНЕ, ВИДНА ПРИ PRINT/PDF) ==================== -->
+    <div id="print-area" class="hidden print:block"></div>
+
+    <!-- ==================== УВЕДОМЛЕНИЯ (TOAST / SNACKBAR) ==================== -->
+    <div id="toast-container" class="fixed bottom-20 lg:bottom-5 right-4 z-50 flex flex-col gap-2 max-w-sm w-[calc(100%-2rem)] pointer-events-none"></div>
+
+    <!-- ==================== ОСНОВНАЯ ЛОГИКА ПРИЛОЖЕНИЯ ==================== -->
+    <script>
+        /* =========================================================================
+           1. КОНСТАНТЫ И УТИЛИТЫ
+           ========================================================================= */
+        const STORAGE_KEY = 'fayzi_rasul_android_v1';
+        const CURRENCY = 'сомони';
+        const CURRENCY_SHORT = 'с.';
+
+        function round2(v) {
+            const n = Number(v) || 0;
+            return Math.round((n + Number.EPSILON) * 100) / 100;
+        }
+
+        function fmtMoney(v) {
+            return round2(v).toLocaleString('ru-RU', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }) + ' ' + CURRENCY_SHORT;
+        }
+
+        function fmtQty(qty, unit) {
+            const n = Number(qty) || 0;
+            if (unit === 'шт') return `${Math.round(n)} шт`;
+            return `${Number(n.toFixed(2))} кг`;
+        }
+
+        function fmtDate(iso) {
+            if (!iso) return '—';
+            return new Date(iso).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+
+        function fmtDateTime(iso) {
+            if (!iso) return '—';
+            return new Date(iso).toLocaleString('ru-RU', {
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+        }
+
+        function daysUntil(isoDate) {
+            const now = new Date();
+            now.setHours(0, 0, 0, 0);
+            const target = new Date(isoDate);
+            target.setHours(0, 0, 0, 0);
+            return Math.ceil((target - now) / (1000 * 3600 * 24));
+        }
+
+        function addDaysISO(days) {
+            const d = new Date();
+            d.setDate(d.getDate() + days);
+            return d.toISOString().split('T')[0];
+        }
+
+        function esc(str) {
+            return String(str ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function generateIdempotencyKey() {
+            return 'IDEMP-' + Date.now() + '-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+
+        /* =========================================================================
+           2. ПРЕДЗАПОЛНЕННЫЕ ДЕМО-ДАННЫЕ (ТАДЖИКИСТАН, ФАЙЗИ РАСУЛ)
+           ========================================================================= */
+        function createDefaultState() {
+            const now = Date.now();
+            const h = 3600 * 1000;
+
+            return {
+                activeUserId: 'u_owner',
+                activeTab: 'sales', // 'sales' | 'warehouse' | 'shops' | 'inventory' | 'printer' | 'reports' | 'team' | 'audit' | 'android_docs'
+                nextInvoiceNo: 1005,
+                usedIdempotencyKeys: ['IDEMP-INIT-1001', 'IDEMP-INIT-1002', 'IDEMP-INIT-1003', 'IDEMP-INIT-1004'],
+
+                // 1. Пользователи и 3 роли
+                users: [
+                    {
+                        id: 'u_owner',
+                        name: 'Файзиев Расул',
+                        phone: '+992 90 000-01-01',
+                        role: 'owner',
+                        roleLabel: 'Владелец',
+                        adminApproved: true,
+                        maxDiscount: 100,
+                        commissionRate: 0,
+                        canReceiveStock: true
+                    },
+                    {
+                        id: 'u_admin',
+                        name: 'Каримов Далер',
+                        phone: '+992 91 222-33-44',
+                        role: 'admin',
+                        roleLabel: 'Администратор',
+                        adminApproved: false, // Требует подтверждения владельца!
+                        maxDiscount: 10,
+                        commissionRate: 0,
+                        canReceiveStock: true
+                    },
+                    {
+                        id: 'u_emp1',
+                        name: 'Саидов Фарход',
+                        phone: '+992 90 111-22-33',
+                        role: 'employee',
+                        roleLabel: 'Торговый представитель',
+                        adminApproved: true,
+                        maxDiscount: 5,
+                        commissionRate: 5,
+                        canReceiveStock: true
+                    },
+                    {
+                        id: 'u_emp2',
+                        name: 'Рахимов Бахром',
+                        phone: '+992 93 444-55-66',
+                        role: 'employee',
+                        roleLabel: 'Торговый представитель',
+                        adminApproved: true,
+                        maxDiscount: 3,
+                        commissionRate: 4,
+                        canReceiveStock: false
+                    }
+                ],
+
+                // 2. Подписка бизнес-аккаунта (65 сомони / месяц)
+                subscription: {
+                    planName: 'Бизнес-аккаунт «Файзи Расул»',
+                    pricePerMonth: 65,
+                    status: 'active',
+                    expiresAt: addDaysISO(4), // 4 дня до окончания — чтобы сразу было видно уведомление-баннер
+                    payments: [
+                        {
+                            id: 'SUB-901',
+                            date: new Date(now - 26 * 24 * h).toISOString(),
+                            months: 1,
+                            amount: 65,
+                            method: 'Алиф Моби',
+                            txCode: 'ALIF-784512',
+                            status: 'Подтверждён'
+                        }
+                    ]
+                },
+
+                // 3. Bluetooth ESC/POS принтер (сохраняется однократное сопряжение)
+                printer: {
+                    connected: true,
+                    deviceId: 'bt_xp300',
+                    deviceName: 'Xprinter XP-P300 (SPP)',
+                    mac: '00:11:22:33:44:AA',
+                    protocol: 'SPP', // 'SPP' | 'BLE'
+                    paperWidth: 58, // 58 | 80
+                    simNoPaper: false,
+                    simDisconnected: false,
+                    lastPrintAt: null
+                },
+
+                // 4. Центральный склад: 8 молочных и мясных товаров с партиями и сроками годности
+                warehouse: [
+                    {
+                        id: 'p1', name: 'Молоко пастеризованное 3.2% (1л)', category: 'Молочная', unit: 'шт', price: 11.50,
+                        batches: [
+                            { batchNo: 'ML-2601', mfgDate: addDaysISO(-4), expDate: addDaysISO(3), qty: 120 }, // истекает < 5 дней
+                            { batchNo: 'ML-2605', mfgDate: addDaysISO(-1), expDate: addDaysISO(8), qty: 240 }
+                        ]
+                    },
+                    {
+                        id: 'p2', name: 'Сметана домашняя 20% (400г)', category: 'Молочная', unit: 'шт', price: 16.00,
+                        batches: [
+                            { batchNo: 'SM-1102', mfgDate: addDaysISO(-3), expDate: addDaysISO(11), qty: 180 }
+                        ]
+                    },
+                    {
+                        id: 'p3', name: 'Кефир 2.5% (1л)', category: 'Молочная', unit: 'шт', price: 10.50,
+                        batches: [
+                            { batchNo: 'KF-0901', mfgDate: addDaysISO(-9), expDate: addDaysISO(-1), qty: 15 }, // просрочен!
+                            { batchNo: 'KF-0912', mfgDate: addDaysISO(-1), expDate: addDaysISO(9), qty: 210 }
+                        ]
+                    },
+                    {
+                        id: 'p4', name: 'Творог фермерский 9%', category: 'Молочная', unit: 'кг', price: 44.00,
+                        batches: [
+                            { batchNo: 'TV-441', mfgDate: addDaysISO(-2), expDate: addDaysISO(4), qty: 48.5 },
+                            { batchNo: 'TV-445', mfgDate: addDaysISO(0), expDate: addDaysISO(10), qty: 65.0 }
+                        ]
+                    },
+                    {
+                        id: 'p5', name: 'Сыр голландский 45%', category: 'Молочная', unit: 'кг', price: 94.00,
+                        batches: [
+                            { batchNo: 'SY-770', mfgDate: addDaysISO(-10), expDate: addDaysISO(45), qty: 112.0 }
+                        ]
+                    },
+                    {
+                        id: 'p6', name: 'Колбаса варёная «Халяль»', category: 'Мясная', unit: 'кг', price: 72.00,
+                        batches: [
+                            { batchNo: 'KL-310', mfgDate: addDaysISO(-5), expDate: addDaysISO(18), qty: 140.0 }
+                        ]
+                    },
+                    {
+                        id: 'p7', name: 'Говядина охлаждённая (вырезка)', category: 'Мясная', unit: 'кг', price: 118.00,
+                        batches: [
+                            { batchNo: 'GV-501', mfgDate: addDaysISO(-1), expDate: addDaysISO(4), qty: 86.5 }
+                        ]
+                    },
+                    {
+                        id: 'p8', name: 'Куриное филе охлаждённое', category: 'Мясная', unit: 'кг', price: 54.00,
+                        batches: [
+                            { batchNo: 'KR-882', mfgDate: addDaysISO(-1), expDate: addDaysISO(6), qty: 135.0 }
+                        ]
+                    }
+                ],
+
+                // 5. Покупатели, магазины и холодильники компании «Файзи Расул»
+                buyers: [
+                    {
+                        id: 'b1', name: 'ИП Шарипов М.', phone: '+992 90 555-10-20',
+                        shops: [
+                            {
+                                id: 's1', name: 'Магазин «Баракат»', address: 'г. Душанбе, ул. Сомони 18',
+                                inventory: [
+                                    { productId: 'p1', name: 'Молоко пастеризованное 3.2% (1л)', unit: 'шт', qty: 60 },
+                                    { productId: 'p5', name: 'Сыр голландский 45%', unit: 'кг', qty: 15 }
+                                ]
+                            },
+                            {
+                                id: 's2', name: 'Минимаркет «Баракат-2»', address: 'г. Душанбе, 82 мкр.',
+                                inventory: [
+                                    { productId: 'p2', name: 'Сметана домашняя 20% (400г)', unit: 'шт', qty: 30 }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'b2', name: 'ООО «Саховат-Трейд»', phone: '+992 93 777-40-50',
+                        shops: [
+                            {
+                                id: 's3', name: 'Супермаркет «Саховат»', address: 'г. Душанбе, ул. Негмата Карабаева 44',
+                                inventory: [
+                                    { productId: 'p6', name: 'Колбаса варёная «Халяль»', unit: 'кг', qty: 25 },
+                                    { productId: 'p7', name: 'Говядина охлаждённая (вырезка)', unit: 'кг', qty: 12 }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'b3', name: 'ИП Назаров С.', phone: '+992 91 888-90-12',
+                        shops: [
+                            {
+                                id: 's4', name: 'База «Мехргон Опт»', address: 'г. Душанбе, рынок Мехргон, пав. 14',
+                                inventory: [
+                                    { productId: 'p8', name: 'Куриное филе охлаждённое', unit: 'кг', qty: 40 }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+
+                fridges: [
+                    { id: 'FR-CLD-001', model: 'Polair DM105-S (Витрина)', shopId: 's1', temp: '+3°C', status: 'Исправен' },
+                    { id: 'FR-CLD-002', model: 'Carboma R700 (Мясной)', shopId: 's3', temp: '+1°C', status: 'Исправен' },
+                    { id: 'FR-CLD-003', model: 'Biriusa 310NF', shopId: 's4', temp: '+4°C', status: 'Требует ТО' }
+                ],
+
+                // 6. Продажи (3 подтверждённые + 1 запрос скидки сверх лимита)
+                sales: [
+                    {
+                        id: 'FR-1001',
+                        idempotencyKey: 'IDEMP-INIT-1001',
+                        createdAt: new Date(now - 28 * h).toISOString(),
+                        employeeId: 'u_emp1',
+                        employeeName: 'Саидов Фарход',
+                        employeePhone: '+992 90 111-22-33',
+                        commissionRate: 5,
+                        buyerId: 'b1',
+                        buyerName: 'ИП Шарипов М.',
+                        shopId: 's1',
+                        shopName: 'Магазин «Баракат»',
+                        status: 'confirmed',
+                        items: [
+                            { productId: 'p1', batchNo: 'ML-2605', name: 'Молоко пастеризованное 3.2% (1л)', unit: 'шт', price: 11.50, qty: 60, returnedQty: 0 },
+                            { productId: 'p5', batchNo: 'SY-770', name: 'Сыр голландский 45%', unit: 'кг', price: 94.00, qty: 15, returnedQty: 0 }
+                        ],
+                        discountPercent: 3,
+                        paidInitial: 1500.00,
+                        debtPaid: 0,
+                        cashRefunded: 0,
+                        returns: []
+                    },
+                    {
+                        id: 'FR-1002',
+                        idempotencyKey: 'IDEMP-INIT-1002',
+                        createdAt: new Date(now - 18 * h).toISOString(),
+                        employeeId: 'u_emp2',
+                        employeeName: 'Рахимов Бахром',
+                        employeePhone: '+992 93 444-55-66',
+                        commissionRate: 4,
+                        buyerId: 'b2',
+                        buyerName: 'ООО «Саховат-Трейд»',
+                        shopId: 's3',
+                        shopName: 'Супермаркет «Саховат»',
+                        status: 'confirmed',
+                        items: [
+                            { productId: 'p6', batchNo: 'KL-310', name: 'Колбаса варёная «Халяль»', unit: 'кг', price: 72.00, qty: 25, returnedQty: 0 },
+                            { productId: 'p7', batchNo: 'GV-501', name: 'Говядина охлаждённая (вырезка)', unit: 'кг', price: 118.00, qty: 12, returnedQty: 0 }
+                        ],
+                        discountPercent: 2,
+                        paidInitial: 3151.68,
+                        debtPaid: 0,
+                        cashRefunded: 0,
+                        returns: []
+                    },
+                    {
+                        id: 'FR-1003',
+                        idempotencyKey: 'IDEMP-INIT-1003',
+                        createdAt: new Date(now - 9 * h).toISOString(),
+                        employeeId: 'u_emp1',
+                        employeeName: 'Саидов Фарход',
+                        employeePhone: '+992 90 111-22-33',
+                        commissionRate: 5,
+                        buyerId: 'b3',
+                        buyerName: 'ИП Назаров С.',
+                        shopId: 's4',
+                        shopName: 'База «Мехргон Опт»',
+                        status: 'confirmed',
+                        items: [
+                            { productId: 'p8', batchNo: 'KR-882', name: 'Куриное филе охлаждённое', unit: 'кг', price: 54.00, qty: 40, returnedQty: 0 }
+                        ],
+                        discountPercent: 0,
+                        paidInitial: 1800.00,
+                        debtPaid: 0,
+                        cashRefunded: 0,
+                        returns: []
+                    },
+                    {
+                        id: 'FR-1004',
+                        idempotencyKey: 'IDEMP-INIT-1004',
+                        createdAt: new Date(now - 2 * h).toISOString(),
+                        employeeId: 'u_emp2',
+                        employeeName: 'Рахимов Бахром',
+                        employeePhone: '+992 93 444-55-66',
+                        commissionRate: 4,
+                        buyerId: 'b1',
+                        buyerName: 'ИП Шарипов М.',
+                        shopId: 's2',
+                        shopName: 'Минимаркет «Баракат-2»',
+                        status: 'pending_approval',
+                        items: [
+                            { productId: 'p2', batchNo: 'SM-1102', name: 'Сметана домашняя 20% (400г)', unit: 'шт', price: 16.00, qty: 50, returnedQty: 0 },
+                            { productId: 'p4', batchNo: 'TV-445', name: 'Творог фермерский 9%', unit: 'кг', price: 44.00, qty: 20, returnedQty: 0 }
+                        ],
+                        discountPercent: 6, // Превышает лимит Бахрома (3%)
+                        paidInitial: 1200.00,
+                        debtPaid: 0,
+                        cashRefunded: 0,
+                        returns: [],
+                        approvalNote: 'Запрошена скидка 6% при лимите сотрудника 3%'
+                    }
+                ],
+
+                // 7. Журнал действий (Audit Log)
+                auditLog: [
+                    {
+                        id: 'LOG-1', date: new Date(now - 28 * h).toISOString(), actor: 'Саидов Фарход (Сотрудник)', type: 'sale',
+                        title: 'Продажа FR-1001 (скидка 3%)',
+                        details: 'Магазин «Баракат». Сумма: 2 100.00 с., скидка 3%, к оплате: 2 037.00 с., получено: 1 500.00 с.'
+                    },
+                    {
+                        id: 'LOG-2', date: new Date(now - 18 * h).toISOString(), actor: 'Рахимов Бахром (Сотрудник)', type: 'sale',
+                        title: 'Продажа FR-1002 (скидка 2%)',
+                        details: 'Супермаркет «Саховат». Полная оплата 3 151.68 с.'
+                    },
+                    {
+                        id: 'LOG-3', date: new Date(now - 2 * h).toISOString(), actor: 'Рахимов Бахром (Сотрудник)', type: 'discount_req',
+                        title: 'Запрос скидки 6% по накладной FR-1004',
+                        details: 'Превышен лимит сотрудника (3%). Ожидает одобрения владельца или подтверждённого администратора.'
+                    }
+                ]
+            };
+        }
+
+        /* =========================================================================
+           3. УПРАВЛЕНИЕ СОСТОЯНИЕМ И ЧЕРНОВИКОМ ПРОДАЖИ
+           ========================================================================= */
+        let state = loadState();
+        let isSubmittingSale = false;
+        let saleDraft = createEmptyDraft();
+        let androidDocSubtab = 'flutter'; // 'flutter' | 'sql' | 'guide'
+        let inventoryInputs = {}; // { productId: actualQty }
+
+        function createEmptyDraft() {
+            const firstBuyer = state?.buyers?.[0];
+            const firstShop = firstBuyer?.shops?.[0];
+            return {
+                buyerId: firstBuyer ? firstBuyer.id : '',
+                shopId: firstShop ? firstShop.id : '',
+                items: [],
+                discountPercent: 0, // СТРОГО 0% по умолчанию, без автоскидок!
+                paidAmount: 0,
+                idempotencyKey: generateIdempotencyKey()
+            };
+        }
+
+        function loadState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return createDefaultState();
+                const parsed = JSON.parse(raw);
+                if (!parsed || !Array.isArray(parsed.users)) return createDefaultState();
+                return parsed;
+            } catch (e) {
+                console.error('Ошибка загрузки localStorage:', e);
+                return createDefaultState();
+            }
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            } catch (e) {
+                console.error('Ошибка сохранения localStorage:', e);
+            }
+        }
+
+        function addLog(actor, type, title, details) {
+            state.auditLog.unshift({
+                id: 'LOG-' + Date.now() + '-' + Math.floor(Math.random() * 99),
+                date: new Date().toISOString(),
+                actor, type, title, details
+            });
+        }
+
+        function getActiveUser() {
+            return state.users.find(u => u.id === state.activeUserId) || state.users[0];
+        }
+
+        function isOwner(u = getActiveUser()) { return u.role === 'owner'; }
+        function isApprovedAdmin(u = getActiveUser()) { return u.role === 'admin' && u.adminApproved === true; }
+        function isPendingAdmin(u = getActiveUser()) { return u.role === 'admin' && !u.adminApproved; }
+        function isManager(u = getActiveUser()) { return isOwner(u) || isApprovedAdmin(u); }
+
+        function getProductStock(product) {
+            return round2((product.batches || []).reduce((s, b) => s + (Number(b.qty) || 0), 0));
+        }
+
+        function findBuyerAndShop(buyerId, shopId) {
+            const buyer = state.buyers.find(b => b.id === buyerId);
+            const shop = buyer ? buyer.shops.find(s => s.id === shopId) : null;
+            return { buyer, shop };
+        }
+
+        function findShopById(shopId) {
+            for (const b of state.buyers) {
+                const s = b.shops.find(x => x.id === shopId);
+                if (s) return { buyer: b, shop: s };
+            }
+            return { buyer: null, shop: null };
+        }
+
+        /* =========================================================================
+           4. ФИНАНСОВОЕ ЯДРО (СКИДКА, ДОЛГ, ВОЗВРАТЫ, КОМИССИЯ)
+           ========================================================================= */
+        function calcSaleFinancials(sale) {
+            const originalGross = round2(sale.items.reduce((s, it) => s + (it.qty * it.price), 0));
+            const returnedGross = round2(sale.items.reduce((s, it) => s + ((it.returnedQty || 0) * it.price), 0));
+            const activeGross = round2(originalGross - returnedGross);
+
+            const discountPercent = Number(sale.discountPercent) || 0;
+            const discountAmount = round2(activeGross * discountPercent / 100);
+            const finalPayable = round2(activeGross - discountAmount);
+
+            const totalReceived = round2((Number(sale.paidInitial) || 0) + (Number(sale.debtPaid) || 0));
+            const cashRefunded = round2(Number(sale.cashRefunded) || 0);
+            const effectivePaid = round2(Math.max(0, totalReceived - cashRefunded));
+
+            const debt = round2(Math.max(0, finalPayable - effectivePaid));
+            const commBase = Math.min(effectivePaid, finalPayable);
+            const commission = sale.status === 'confirmed'
+                ? round2(commBase * (Number(sale.commissionRate) || 0) / 100)
+                : 0;
+            const totalReturnedNet = round2((sale.returns || []).reduce((s, r) => s + (r.netReturn || 0), 0));
+
+            return {
+                originalGross, returnedGross, activeGross,
+                discountPercent, discountAmount, finalPayable,
+                effectivePaid, cashRefunded, debt, commission, totalReturnedNet
+            };
+        }
+
+        function getShopDebt(shopId) {
+            return round2(
+                state.sales
+                    .filter(s => s.status === 'confirmed' && s.shopId === shopId)
+                    .reduce((sum, s) => sum + calcSaleFinancials(s).debt, 0)
+            );
+        }
+
+        function getPendingDiscountCount() {
+            return state.sales.filter(s => s.status === 'pending_approval').length;
+        }
+
+        function computeEmployeeStats(userId) {
+            const confirmed = state.sales.filter(s => s.employeeId === userId && s.status === 'confirmed');
+            let gross = 0, discount = 0, payable = 0, paid = 0, debt = 0, returns = 0, comm = 0;
+            for (const s of confirmed) {
+                const f = calcSaleFinancials(s);
+                gross = round2(gross + f.activeGross);
+                discount = round2(discount + f.discountAmount);
+                payable = round2(payable + f.finalPayable);
+                paid = round2(paid + f.effectivePaid);
+                debt = round2(debt + f.debt);
+                returns = round2(returns + f.totalReturnedNet);
+                comm = round2(comm + f.commission);
+            }
+            return { count: confirmed.length, gross, discount, payable, paid, debt, returns, comm };
+        }
+
+        /* =========================================================================
+           5. НАВИГАЦИЯ, TOAST И МОДАЛЬНЫЕ ОКНА
+           ========================================================================= */
+        function getNavItemsForUser(user) {
+            const pendingDiscounts = getPendingDiscountCount();
+            const unapprovedAdmins = state.users.filter(u => u.role === 'admin' && !u.adminApproved).length;
+
+            if (isPendingAdmin(user)) {
+                return [
+                    { id: 'sales', label: 'Доступ ограничен', icon: 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z' }
+                ];
+            }
+
+            const items = [
+                { id: 'sales', label: 'Продажи', badge: isManager(user) ? pendingDiscounts : 0, icon: 'M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z' },
+                { id: 'warehouse', label: 'Склад и партии', icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
+                { id: 'shops', label: 'Магазины и холод.', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' },
+                { id: 'printer', label: 'Bluetooth-принтер', icon: 'M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z' }
+            ];
+
+            if (isManager(user)) {
+                items.push({ id: 'inventory', label: 'Инвентаризация', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4' });
+                items.push({ id: 'reports', label: 'Отчёты и экспорт', icon: 'M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' });
+                items.push({ id: 'team', label: isOwner(user) ? 'Команда и подписка' : 'Команда', badge: isOwner(user) ? unapprovedAdmins : 0, icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' });
+                items.push({ id: 'audit', label: 'Журнал действий', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' });
+                items.push({ id: 'android_docs', label: 'Android / Flutter / SQL', icon: 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4' });
+            } else {
+                // Сотруднику доступен его личный отчёт
+                items.push({ id: 'reports', label: 'Мой отчёт', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' });
+            }
+
+            return items;
+        }
+
+        function navigate(tabId) {
+            state.activeTab = tabId;
+            saveState();
+            renderApp();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showToast(message, type = 'success') {
+            const wrap = document.getElementById('toast-container');
+            const styles = {
+                success: 'bg-brand-700 text-white border-brand-800',
+                error: 'bg-rose-600 text-white border-rose-700',
+                warning: 'bg-amber-500 text-white border-amber-600',
+                info: 'bg-slate-800 text-white border-slate-900'
+            };
+            const el = document.createElement('div');
+            el.className = `pointer-events-auto px-4 py-3 rounded-2xl shadow-xl border text-sm font-medium flex items-center justify-between gap-3 animate-m3 ${styles[type] || styles.info}`;
+            el.innerHTML = `<span>${esc(message)}</span><button onclick="this.parentElement.remove()" class="opacity-80 hover:opacity-100 text-lg leading-none">&times;</button>`;
+            wrap.appendChild(el);
+            setTimeout(() => { if (el.parentElement) el.remove(); }, 4200);
+        }
+
+        function openModal(html) {
+            const bd = document.getElementById('modal-backdrop');
+            document.getElementById('modal-container').innerHTML = html;
+            bd.classList.remove('hidden');
+            bd.classList.add('flex');
+        }
+
+        function closeModal() {
+            const bd = document.getElementById('modal-backdrop');
+            bd.classList.add('hidden');
+            bd.classList.remove('flex');
+        }
+
+        document.getElementById('modal-backdrop').addEventListener('click', (e) => {
+            if (e.target.id === 'modal-backdrop') closeModal();
+        });
+
+        function copyTextToClipboard(text, label = 'Код') {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                document.execCommand('copy');
+                showToast(`${label} скопирован в буфер обмена`, 'success');
+            } catch (e) {
+                showToast('Не удалось скопировать текст', 'error');
+            }
+            document.body.removeChild(ta);
+        }
+
+        /* =========================================================================
+           6. ПЕРЕКЛЮЧАТЕЛЬ АККАУНТОВ И СБРОС ДЕМО
+           ========================================================================= */
+        function openAccountSwitcher() {
+            const current = getActiveUser();
+            openModal(`
+                <div class="p-5 sm:p-6 overflow-y-auto">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-extrabold text-slate-900">Выбор аккаунта (3 роли)</h3>
+                            <p class="text-xs text-slate-500">Одно Android-приложение «Файзи Расул» — интерфейс перестраивается по роли</p>
+                        </div>
+                        <button onclick="closeModal()" class="p-1.5 rounded-xl hover:bg-slate-100 text-slate-500">&times;</button>
+                    </div>
+                    <div class="space-y-2.5">
+                        ${state.users.map(u => {
+                            const active = u.id === current.id;
+                            const roleBadge = u.role === 'owner'
+                                ? 'bg-brand-100 text-brand-800'
+                                : u.role === 'admin'
+                                    ? (u.adminApproved ? 'bg-indigo-100 text-indigo-800' : 'bg-amber-100 text-amber-800')
+                                    : 'bg-sky-100 text-sky-800';
+                            const statusText = u.role === 'admin' && !u.adminApproved ? 'Ожидает подтверждения владельца' : u.roleLabel;
+                            return `
+                                <button onclick="switchUser('${u.id}')"
+                                    class="w-full p-3.5 rounded-2xl border-2 text-left transition-all flex items-center justify-between gap-3 ${
+                                        active ? 'border-brand-600 bg-brand-50/60' : 'border-slate-200 hover:border-slate-300 bg-white'
+                                    }">
+                                    <div>
+                                        <div class="font-bold text-slate-900 flex items-center gap-2 flex-wrap">
+                                            <span>${esc(u.name)}</span>
+                                            <span class="px-2 py-0.5 rounded-full text-[11px] font-bold ${roleBadge}">${esc(statusText)}</span>
+                                        </div>
+                                        <div class="text-xs text-slate-500 mt-0.5">
+                                            ${esc(u.phone)}
+                                            ${u.role === 'employee' ? ` • Лимит скидки: ${u.maxDiscount}% • Комиссия: ${u.commissionRate}%` : ''}
+                                        </div>
+                                    </div>
+                                    ${active ? `<span class="text-xs font-extrabold text-brand-700 shrink-0">Активен</span>` : `<span class="text-xs font-semibold text-slate-400 shrink-0">Войти →</span>`}
+                                </button>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `);
+        }
+
+        function switchUser(userId) {
+            state.activeUserId = userId;
+            const user = getActiveUser();
+            const allowedTabs = getNavItemsForUser(user).map(t => t.id);
+            if (!allowedTabs.includes(state.activeTab)) {
+                state.activeTab = allowedTabs[0] || 'sales';
+            }
+            saleDraft.discountPercent = 0; // Сброс ручной скидки при смене пользователя
+            saveState();
+            closeModal();
+            renderApp();
+            showToast(`Вход выполнен: ${user.name} (${user.roleLabel})`, 'info');
+        }
+
+        function openResetModal() {
+            openModal(`
+                <div class="p-6">
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Сбросить демо-данные?</h3>
+                    <p class="text-sm text-slate-600 mb-5">Все продажи, партии склада, подписка, сопряжение Bluetooth-принтера и журнал вернутся к исходному состоянию.</p>
+                    <div class="flex justify-end gap-2">
+                        <button onclick="closeModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 text-sm font-medium">Отмена</button>
+                        <button onclick="confirmReset()" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold">Сбросить</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        function confirmReset() {
+            localStorage.removeItem(STORAGE_KEY);
+            state = createDefaultState();
+            saleDraft = createEmptyDraft();
+            inventoryInputs = {};
+            saveState();
+            closeModal();
+            renderApp();
+            showToast('Демо-данные «Файзи Расул» восстановлены', 'info');
+        }
+
+        /* =========================================================================
+           7. ГЛАВНЫЙ РЕНДЕР ПРИЛОЖЕНИЯ
+           ========================================================================= */
+        function renderApp() {
+            const user = getActiveUser();
+            const navItems = getNavItemsForUser(user);
+            if (!navItems.some(n => n.id === state.activeTab)) {
+                state.activeTab = navItems[0].id;
+            }
+
+            // 1. Обновление индикатора Bluetooth в шапке
+            const btBtn = document.getElementById('header-bt-btn');
+            const btOk = state.printer.connected && !state.printer.simDisconnected;
+            btBtn.className = `flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-semibold transition-all ${
+                btOk ? 'bg-emerald-50 border-emerald-200 text-brand-800' : 'bg-rose-50 border-rose-200 text-rose-700'
+            }`;
+            btBtn.innerHTML = `
+                <span class="w-2 h-2 rounded-full ${btOk ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}"></span>
+                <span class="hidden md:inline">${btOk ? esc(state.printer.deviceName.split(' ')[0]) + ` (${state.printer.paperWidth}мм)` : 'Принтер откл.'}</span>
+                <span class="md:hidden">BT</span>
+            `;
+
+            // 2. Обновление кнопки пользователя в шапке
+            const userBtn = document.getElementById('header-user-btn');
+            const initials = user.name.split(' ').map(w => w[0]).join('').slice(0, 2);
+            userBtn.innerHTML = `
+                <div class="w-7 h-7 rounded-lg bg-brand-700 text-white text-xs font-bold flex items-center justify-center shrink-0">${esc(initials)}</div>
+                <div class="hidden sm:block leading-tight">
+                    <div class="text-xs font-bold text-slate-900">${esc(user.name)}</div>
+                    <div class="text-[10px] font-semibold text-brand-700">${esc(user.roleLabel)}</div>
+                </div>
+                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            `;
+
+            // 3. Баннер подписки (если осталось <= 7 дней)
+            const subWrap = document.getElementById('subscription-banner-wrap');
+            const daysLeft = daysUntil(state.subscription.expiresAt);
+            if (daysLeft <= 7) {
+                subWrap.classList.remove('hidden');
+                subWrap.innerHTML = `
+                    <div class="rounded-2xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm ${
+                        daysLeft <= 0 ? 'bg-rose-600 text-white' : 'bg-amber-50 border border-amber-200 text-amber-900'
+                    }">
+                        <div class="flex items-center gap-2 font-medium">
+                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>Подписка «Файзи Расул» (65 сомони/мес): ${daysLeft <= 0 ? 'срок истёк!' : `осталось ${daysLeft} дн. (до ${fmtDate(state.subscription.expiresAt)})`}</span>
+                        </div>
+                        ${isOwner(user) ? `
+                            <button onclick="openRenewSubscriptionModal()"
+                                class="px-3 py-1 rounded-xl text-xs font-bold ${daysLeft <= 0 ? 'bg-white text-rose-700' : 'bg-brand-700 text-white hover:bg-brand-800'} transition-colors">
+                                Продлить подписку
+                            </button>
+                        ` : `<span class="text-[11px] opacity-80">Продление доступно владельцу</span>`}
+                    </div>
+                `;
+            } else {
+                subWrap.classList.add('hidden');
+            }
+
+            // 4. Десктопная боковая навигация
+            document.getElementById('desktop-nav').innerHTML = navItems.map(item => {
+                const active = state.activeTab === item.id;
+                return `
+                    <button onclick="navigate('${item.id}')"
+                        class="w-full px-3.5 py-2.5 rounded-2xl text-sm font-semibold flex items-center justify-between transition-all ${
+                            active
+                                ? 'bg-brand-700 text-white shadow-sm'
+                                : 'text-slate-600 hover:bg-white hover:text-slate-900 hover:shadow-xs'
+                        }">
+                        <span class="flex items-center gap-3 truncate">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${item.icon}"/>
+                            </svg>
+                            <span class="truncate">${esc(item.label)}</span>
+                        </span>
+                        ${item.badge > 0 ? `<span class="px-2 py-0.5 text-[11px] font-bold rounded-full ${active ? 'bg-amber-400 text-slate-900' : 'bg-amber-500 text-white'}">${item.badge}</span>` : ''}
+                    </button>
+                `;
+            }).join('');
+
+            // 5. Мобильная нижняя навигация (первые 5 вкладок + "Ещё" если больше)
+            const mobileNav = document.getElementById('mobile-bottom-nav');
+            const primaryMobile = navItems.slice(0, 4);
+            const hasMore = navItems.length > 4;
+            mobileNav.innerHTML = primaryMobile.map(item => {
+                const active = state.activeTab === item.id;
+                return `
+                    <button onclick="navigate('${item.id}')" class="flex flex-col items-center justify-center py-1 px-2 rounded-xl min-w-[60px] relative ${active ? 'text-brand-700' : 'text-slate-500'}">
+                        <div class="px-3 py-0.5 rounded-full ${active ? 'bg-brand-100' : ''}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${item.icon}"/>
+                            </svg>
+                        </div>
+                        <span class="text-[10px] font-semibold mt-0.5 truncate max-w-[70px]">${esc(item.label.split(' ')[0])}</span>
+                        ${item.badge > 0 ? `<span class="absolute top-0 right-2 w-4 h-4 rounded-full bg-amber-500 text-white text-[9px] font-bold flex items-center justify-center">${item.badge}</span>` : ''}
+                    </button>
+                `;
+            }).join('') + (hasMore ? `
+                <button onclick="openMobileMoreMenu()" class="flex flex-col items-center justify-center py-1 px-2 rounded-xl min-w-[60px] text-slate-500">
+                    <div class="px-3 py-0.5 rounded-full">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </div>
+                    <span class="text-[10px] font-semibold mt-0.5">Меню</span>
+                </button>
+            ` : '');
+
+            // 6. Рендер основного контента
+            const main = document.getElementById('app-main');
+            if (isPendingAdmin(user)) {
+                main.innerHTML = renderPendingAdminScreen(user);
+                return;
+            }
+
+            switch (state.activeTab) {
+                case 'sales': main.innerHTML = renderSalesTab(user); break;
+                case 'warehouse': main.innerHTML = renderWarehouseTab(user); break;
+                case 'shops': main.innerHTML = renderShopsAndFridgesTab(user); break;
+                case 'printer': main.innerHTML = renderPrinterTab(); break;
+                case 'inventory': main.innerHTML = renderInventoryTab(); break;
+                case 'reports': main.innerHTML = renderReportsTab(user); break;
+                case 'team': main.innerHTML = renderTeamAndSubscriptionTab(user); break;
+                case 'audit': main.innerHTML = renderAuditTab(); break;
+                case 'android_docs': main.innerHTML = renderAndroidDocsTab(); break;
+                default: main.innerHTML = renderSalesTab(user);
+            }
+        }
+
+        function openMobileMoreMenu() {
+            const navItems = getNavItemsForUser(getActiveUser());
+            openModal(`
+                <div class="p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-base font-extrabold text-slate-900">Все разделы</h3>
+                        <button onclick="closeModal()" class="text-slate-400 text-xl">&times;</button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        ${navItems.map(it => `
+                            <button onclick="closeModal(); navigate('${it.id}')"
+                                class="p-3 rounded-2xl border text-left flex items-center gap-2.5 text-xs font-bold ${
+                                    state.activeTab === it.id ? 'bg-brand-700 text-white border-brand-700' : 'bg-slate-50 text-slate-800 border-slate-200'
+                                }">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${it.icon}"/>
+                                </svg>
+                                <span class="truncate">${esc(it.label)}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `);
+        }
+
+        function renderPendingAdminScreen(user) {
+            return `
+                <div class="bg-white rounded-3xl border-2 border-amber-300 p-8 text-center max-w-lg mx-auto shadow-sm mt-6">
+                    <div class="w-16 h-16 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-extrabold text-slate-900">Ожидает подтверждения владельца</h2>
+                    <p class="text-sm text-slate-600 mt-2">
+                        Аккаунт <strong>${esc(user.name)}</strong> назначен на роль <strong>Администратор</strong>.
+                        Согласно политике безопасности «Файзи Расул», рабочий доступ администратора активируется только после подтверждения владельцем.
+                    </p>
+                    <div class="mt-6 p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600">
+                        Для проверки: переключитесь на <strong>Файзиев Расул (Владелец)</strong> → раздел <strong>«Команда и подписка»</strong> → нажмите <strong>«Подтвердить администратора»</strong>.
+                    </div>
+                    <button onclick="openAccountSwitcher()" class="mt-5 px-5 py-2.5 rounded-2xl bg-brand-700 hover:bg-brand-800 text-white text-sm font-bold transition-colors">
+                        Сменить аккаунт
+                    </button>
+                </div>
+            `;
+        }
+
+        /* =========================================================================
+           8. ВКЛАДКА 1: ОПТОВЫЕ ПРОДАЖИ, РУЧНАЯ СКИДКА, ПОДТВЕРЖДЕНИЕ И ВОЗВРАТЫ
+           ========================================================================= */
+        function renderSalesTab(user) {
+            const pendingSales = state.sales.filter(s => s.status === 'pending_approval');
+            const visibleSales = isManager(user) ? state.sales : state.sales.filter(s => s.employeeId === user.id);
+
+            const { buyer, shop } = findBuyerAndShop(saleDraft.buyerId, saleDraft.shopId);
+            const shopDebt = shop ? getShopDebt(shop.id) : 0;
+
+            const gross = round2(saleDraft.items.reduce((s, i) => s + i.qty * i.price, 0));
+            const discPct = Math.max(0, Math.min(100, Number(saleDraft.discountPercent) || 0));
+            const discAmt = round2(gross * discPct / 100);
+            const payable = round2(gross - discAmt);
+            const paid = Math.max(0, Number(saleDraft.paidAmount) || 0);
+            const debt = round2(Math.max(0, payable - paid));
+            const commRate = user.commissionRate || 0;
+            const projComm = round2(Math.min(paid, payable) * commRate / 100);
+            const exceedsLimit = discPct > user.maxDiscount;
+
+            // Доступные партии для выбранного товара
+            const firstProd = state.warehouse[0];
+
+            return `
+                <div class="space-y-5">
+                    <!-- Блок запросов скидок сверх лимита (только Владелец и подтверждённый Админ) -->
+                    ${isManager(user) && pendingSales.length > 0 ? `
+                        <div class="bg-amber-50 border-2 border-amber-300 rounded-3xl p-4 sm:p-5 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <h2 class="text-sm sm:text-base font-extrabold text-amber-900 flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping"></span>
+                                    Запросы скидок сверх лимита (${pendingSales.length})
+                                </h2>
+                            </div>
+                            <div class="space-y-2.5">
+                                ${pendingSales.map(s => {
+                                    const f = calcSaleFinancials(s);
+                                    return `
+                                        <div class="bg-white rounded-2xl p-4 border border-amber-200 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                                            <div class="text-xs sm:text-sm space-y-1">
+                                                <div class="font-bold text-slate-900">
+                                                    ${esc(s.id)} • ${esc(s.employeeName)} запросил скидку <span class="text-rose-600">${s.discountPercent}%</span>
+                                                </div>
+                                                <div class="text-slate-600">
+                                                    ${esc(s.buyerName)} (${esc(s.shopName)}) • До скидки: <strong>${fmtMoney(f.activeGross)}</strong> → К оплате: <strong class="text-brand-700">${fmtMoney(f.finalPayable)}</strong>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-2 shrink-0">
+                                                <button onclick="rejectPendingSale('${s.id}')" class="px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold">Отклонить</button>
+                                                <button onclick="approvePendingSale('${s.id}')" class="px-4 py-2 rounded-xl bg-brand-700 hover:bg-brand-800 text-white text-xs font-bold">Одобрить и провести</button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <!-- ФОРМА НОВОЙ ОПТОВОЙ ПРОДАЖИ -->
+                    <div class="grid grid-cols-1 xl:grid-cols-12 gap-5">
+                        <!-- Левая часть: Покупатель + Товары -->
+                        <div class="xl:col-span-7 space-y-4">
+                            <div class="bg-white rounded-3xl border border-slate-200 p-4 sm:p-5 shadow-xs">
+                                <h2 class="text-base font-extrabold text-slate-900 mb-3 flex items-center gap-2">
+                                    <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-800 text-xs font-extrabold flex items-center justify-center">1</span>
+                                    Покупатель и торговая точка
+                                </h2>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-500 mb-1">Покупатель</label>
+                                        <select onchange="onDraftBuyerChange(this.value)" class="w-full rounded-2xl border border-slate-300 px-3 py-2.5 text-sm font-semibold bg-white outline-none focus:ring-2 focus:ring-brand-600">
+                                            ${state.buyers.map(b => `<option value="${b.id}" ${b.id === saleDraft.buyerId ? 'selected' : ''}>${esc(b.name)}</option>`).join('')}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-500 mb-1">Магазин</label>
+                                        <select onchange="onDraftShopChange(this.value)" class="w-full rounded-2xl border border-slate-300 px-3 py-2.5 text-sm font-semibold bg-white outline-none focus:ring-2 focus:ring-brand-600">
+                                            ${(buyer ? buyer.shops : []).map(s => `<option value="${s.id}" ${s.id === saleDraft.shopId ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}
+                                        </select>
+                                    </div>
+                                </div>
+                                ${shop ? `
+                                    <div class="mt-3 px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-wrap items-center justify-between gap-2 text-xs">
+                                        <span class="text-slate-600">${esc(shop.address)}</span>
+                                        <span class="font-bold ${shopDebt > 0 ? 'text-rose-600' : 'text-brand-700'}">Текущий долг магазина: ${fmtMoney(shopDebt)}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+
+                            <div class="bg-white rounded-3xl border border-slate-200 p-4 sm:p-5 shadow-xs">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-800 text-xs font-extrabold flex items-center justify-center">2</span>
+                                        Подбор товаров и партий
+                                    </h2>
+                                    <span class="text-[11px] font-semibold text-slate-400">Только кг / шт</span>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 mb-4">
+                                    <div class="sm:col-span-6">
+                                        <select id="sale-prod-select" onchange="updateBatchSelectOptions()"
+                                            class="w-full rounded-2xl border border-slate-300 px-3 py-2.5 text-sm font-medium bg-white outline-none focus:ring-2 focus:ring-brand-600">
+                                            ${state.warehouse.map(p => {
+                                                const st = getProductStock(p);
+                                                return `<option value="${p.id}" ${st <= 0 ? 'disabled' : ''}>${esc(p.name)} — ${fmtMoney(p.price)}/${p.unit} (${fmtQty(st, p.unit)})</option>`;
+                                            }).join('')}
+                                        </select>
+                                    </div>
+                                    <div class="sm:col-span-3">
+                                        <select id="sale-batch-select" class="w-full rounded-2xl border border-slate-300 px-2.5 py-2.5 text-xs font-semibold bg-white outline-none focus:ring-2 focus:ring-brand-600">
+                                            ${renderBatchOptionsHtml(firstProd ? firstProd.id : '')}
+                                        </select>
+                                    </div>
+                                    <div class="sm:col-span-2">
+                                        <input id="sale-qty-input" type="number" min="0.1" step="any" value="5" placeholder="Кол-во"
+                                            class="w-full rounded-2xl border border-slate-300 px-3 py-2.5 text-sm font-bold text-center outline-none focus:ring-2 focus:ring-brand-600">
+                                    </div>
+                                    <div class="sm:col-span-1">
+                                        <button onclick="addDraftItem()" class="w-full h-full py-2.5 rounded-2xl bg-brand-700 hover:bg-brand-800 text-white font-bold text-base transition-colors">+</button>
+                                    </div>
+                                </div>
+
+                                ${saleDraft.items.length === 0 ? `
+                                    <div class="py-8 text-center rounded-2xl border-2 border-dashed border-slate-200 text-slate-400 text-sm">
+                                        Добавьте молочную или мясную продукцию в накладную
+                                    </div>
+                                ` : `
+                                    <div class="overflow-x-auto rounded-2xl border border-slate-200">
+                                        <table class="w-full text-xs sm:text-sm text-left">
+                                            <thead class="bg-slate-50 text-slate-500 text-[11px] uppercase">
+                                                <tr>
+                                                    <th class="px-3 py-2.5">Товар / Партия</th>
+                                                    <th class="px-3 py-2.5 text-right">Цена</th>
+                                                    <th class="px-3 py-2.5 text-center">Кол-во</th>
+                                                    <th class="px-3 py-2.5 text-right">Сумма</th>
+                                                    <th class="px-2 py-2.5"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-slate-100">
+                                                ${saleDraft.items.map((it, idx) => `
+                                                    <tr>
+                                                        <td class="px-3 py-2.5">
+                                                            <div class="font-semibold text-slate-900">${esc(it.name)}</div>
+                                                            <div class="text-[11px] text-slate-400">Партия: ${esc(it.batchNo)}</div>
+                                                        </td>
+                                                        <td class="px-3 py-2.5 text-right whitespace-nowrap text-slate-600">${fmtMoney(it.price)}/${it.unit}</td>
+                                                        <td class="px-3 py-2.5 text-center whitespace-nowrap font-bold text-slate-900">${fmtQty(it.qty, it.unit)}</td>
+                                                        <td class="px-3 py-2.5 text-right whitespace-nowrap font-bold text-slate-900">${fmtMoney(it.qty * it.price)}</td>
+                                                        <td class="px-2 py-2.5 text-right">
+                                                            <button onclick="removeDraftItem(${idx})" class="text-slate-400 hover:text-rose-600 font-bold text-base px-1">&times;</button>
+                                                        </td>
+                                                    </tr>
+                                                `).join('')}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                `}
+                            </div>
+                        </div>
+
+                        <!-- Правая часть: Ручная скидка и расчёт -->
+                        <div class="xl:col-span-5">
+                            <div class="bg-white rounded-3xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-4 sticky top-20">
+                                <div class="flex items-center justify-between">
+                                    <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-800 text-xs font-extrabold flex items-center justify-center">3</span>
+                                        Скидка и оплата
+                                    </h2>
+                                    <span class="text-[10px] font-mono text-slate-400">${esc(saleDraft.idempotencyKey.slice(-8))}</span>
+                                </div>
+
+                                <div class="flex justify-between items-center px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200">
+                                    <span class="text-sm font-medium text-slate-600">Общая сумма:</span>
+                                    <span id="live-gross" class="text-lg font-extrabold text-slate-900">${fmtMoney(gross)}</span>
+                                </div>
+
+                                <!-- Ручная общая скидка (%) -->
+                                <div class="p-4 rounded-2xl border-2 ${exceedsLimit ? 'border-amber-400 bg-amber-50/70' : 'border-brand-600 bg-brand-50/60'}">
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <label for="draft-discount-input" class="text-xs font-extrabold uppercase tracking-wide ${exceedsLimit ? 'text-amber-900' : 'text-brand-900'}">
+                                            ОБЩАЯ СКИДКА (%)
+                                        </label>
+                                        <span class="text-xs font-bold ${exceedsLimit ? 'text-amber-700' : 'text-brand-700'}">Ваш лимит: до ${user.maxDiscount}%</span>
+                                    </div>
+                                    <div class="relative flex items-center">
+                                        <input id="draft-discount-input" type="number" min="0" max="100" step="0.1" value="${saleDraft.discountPercent}"
+                                            oninput="onLiveDiscountChange(this.value)"
+                                            class="w-full rounded-xl border-2 border-slate-200 focus:border-brand-600 bg-white px-4 py-2.5 text-2xl font-extrabold text-slate-900 outline-none pr-10">
+                                        <span class="absolute right-3.5 text-xl font-extrabold text-slate-400">%</span>
+                                    </div>
+                                    <div class="flex flex-wrap gap-1.5 mt-2">
+                                        ${[0, 1, 2, 3, 5].map(v => `
+                                            <button type="button" onclick="setQuickDiscount(${v})"
+                                                class="px-2.5 py-1 rounded-lg text-xs font-bold ${Number(saleDraft.discountPercent) === v ? 'bg-brand-700 text-white' : 'bg-white border border-slate-200 text-slate-700 hover:bg-brand-100'}">
+                                                ${v}%
+                                            </button>
+                                        `).join('')}
+                                    </div>
+                                    <div id="live-limit-warn" class="${exceedsLimit ? '' : 'hidden'} mt-2.5 p-2 rounded-xl bg-amber-100 text-amber-900 text-xs font-semibold">
+                                        Превышен лимит (${user.maxDiscount}%). Накладная уйдёт на подтверждение Владельцу/Администратору.
+                                    </div>
+                                </div>
+
+                                <div class="space-y-1.5 border-y border-slate-100 py-3">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-600">Сумма скидки:</span>
+                                        <span id="live-disc-amt" class="font-bold text-rose-600">− ${fmtMoney(discAmt)}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm font-bold text-slate-900">К ОПЛАТЕ:</span>
+                                        <span id="live-payable" class="text-2xl font-extrabold text-brand-700">${fmtMoney(payable)}</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <label class="text-xs font-bold uppercase text-slate-600">Фактическая оплата</label>
+                                        <button type="button" onclick="payFullDraft()" class="text-xs font-bold text-brand-700 hover:underline">Оплатить полностью</button>
+                                    </div>
+                                    <input id="draft-paid-input" type="number" min="0" step="any" value="${saleDraft.paidAmount}"
+                                        oninput="onLivePaidChange(this.value)"
+                                        class="w-full rounded-2xl border border-slate-300 px-4 py-2.5 text-lg font-extrabold text-slate-900 outline-none focus:ring-2 focus:ring-brand-600">
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-2.5">
+                                    <div class="p-3 rounded-2xl bg-rose-50 border border-rose-200/70">
+                                        <div class="text-[10px] font-bold uppercase text-rose-700">Остаток долга</div>
+                                        <div id="live-debt" class="text-sm sm:text-base font-extrabold text-rose-800 mt-0.5">${fmtMoney(debt)}</div>
+                                    </div>
+                                    <div class="p-3 rounded-2xl bg-emerald-50 border border-emerald-200/70">
+                                        <div class="text-[10px] font-bold uppercase text-brand-800">Комиссия (${commRate}%)</div>
+                                        <div id="live-comm" class="text-sm sm:text-base font-extrabold text-brand-800 mt-0.5">${fmtMoney(projComm)}</div>
+                                    </div>
+                                </div>
+
+                                <button id="btn-confirm-sale" onclick="confirmNewSale()"
+                                    class="w-full py-3.5 rounded-2xl font-extrabold text-sm sm:text-base text-white shadow-md transition-all ${
+                                        exceedsLimit ? 'bg-amber-500 hover:bg-amber-600' : 'bg-brand-700 hover:bg-brand-800'
+                                    }">
+                                    ${exceedsLimit ? 'Отправить на одобрение скидки' : 'Подтвердить продажу'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ИСТОРИЯ ПРОДАЖ, ПЕЧАТЬ ЧЕКОВ И ВОЗВРАТЫ -->
+                    <div class="bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden">
+                        <div class="p-4 sm:p-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2">
+                            <div>
+                                <h2 class="text-base font-extrabold text-slate-900">Реестр продаж (${visibleSales.length})</h2>
+                                <p class="text-xs text-slate-500">Печать Bluetooth-чека (58/80 мм) и оформление частичных/полных возвратов</p>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs sm:text-sm text-left">
+                                <thead class="bg-slate-50 text-slate-500 text-[11px] uppercase">
+                                    <tr>
+                                        <th class="px-4 py-3">Чек / Дата</th>
+                                        <th class="px-4 py-3">Сотрудник</th>
+                                        <th class="px-4 py-3">Покупатель / Магазин</th>
+                                        <th class="px-4 py-3 text-right">До скидки</th>
+                                        <th class="px-4 py-3 text-center">Скидка</th>
+                                        <th class="px-4 py-3 text-right">К оплате</th>
+                                        <th class="px-4 py-3 text-right">Оплачено</th>
+                                        <th class="px-4 py-3 text-right">Долг</th>
+                                        <th class="px-4 py-3 text-right">Комиссия</th>
+                                        <th class="px-4 py-3 text-center">Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    ${visibleSales.map(s => {
+                                        const f = calcSaleFinancials(s);
+                                        const canRet = s.status === 'confirmed' && s.items.some(i => (i.qty - (i.returnedQty || 0)) > 0);
+                                        return `
+                                            <tr class="hover:bg-slate-50/80">
+                                                <td class="px-4 py-3 whitespace-nowrap">
+                                                    <div class="font-bold text-slate-900">${esc(s.id)}</div>
+                                                    <div class="text-[11px] text-slate-400">${fmtDateTime(s.createdAt)}</div>
+                                                </td>
+                                                <td class="px-4 py-3 whitespace-nowrap font-medium text-slate-700">${esc(s.employeeName)}</td>
+                                                <td class="px-4 py-3">
+                                                    <div class="font-semibold text-slate-900">${esc(s.buyerName)}</div>
+                                                    <div class="text-[11px] text-slate-500">${esc(s.shopName)}</div>
+                                                </td>
+                                                <td class="px-4 py-3 text-right whitespace-nowrap">${fmtMoney(f.activeGross)}</td>
+                                                <td class="px-4 py-3 text-center whitespace-nowrap">
+                                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-bold ${f.discountPercent > 0 ? 'bg-brand-100 text-brand-800' : 'bg-slate-100 text-slate-500'}">${f.discountPercent}%</span>
+                                                </td>
+                                                <td class="px-4 py-3 text-right whitespace-nowrap font-bold text-slate-900">${fmtMoney(f.finalPayable)}</td>
+                                                <td class="px-4 py-3 text-right whitespace-nowrap font-semibold text-brand-700">${fmtMoney(f.effectivePaid)}</td>
+                                                <td class="px-4 py-3 text-right whitespace-nowrap font-semibold ${f.debt > 0 ? 'text-rose-600' : 'text-slate-400'}">${fmtMoney(f.debt)}</td>
+                                                <td class="px-4 py-3 text-right whitespace-nowrap font-bold text-indigo-700">${fmtMoney(f.commission)}</td>
+                                                <td class="px-4 py-3 text-center whitespace-nowrap">
+                                                    <div class="mb-1">${renderSaleStatusBadge(s.status)}</div>
+                                                    ${s.status === 'confirmed' ? `
+                                                        <div class="flex items-center justify-center gap-1.5">
+                                                            <button onclick="openConfirmedOrderModal('${s.id}')" class="px-2.5 py-1 rounded-lg bg-brand-50 hover:bg-brand-100 text-brand-800 text-[11px] font-bold">Чек / BT</button>
+                                                            ${canRet ? `<button onclick="openReturnModal('${s.id}')" class="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 text-[11px] font-bold">Возврат</button>` : ''}
+                                                        </div>
+                                                    ` : ''}
+                                                </td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSaleStatusBadge(status) {
+            if (status === 'confirmed') return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-brand-800">Подтверждён</span>`;
+            if (status === 'pending_approval') return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">Ждёт одобрения</span>`;
+            return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800">Отклонён</span>`;
+        }
+
+        function renderBatchOptionsHtml(productId) {
+            const p = state.warehouse.find(x => x.id === productId);
+            if (!p) return '';
+            const avail = p.batches.filter(b => b.qty > 0);
+            if (avail.length === 0) return `<option value="">Нет остатков</option>`;
+            return avail.map(b => {
+                const d = daysUntil(b.expDate);
+                const warn = d < 0 ? ' [ПРОСРОЧЕН]' : d <= 5 ? ` [${d}д]` : '';
+                return `<option value="${esc(b.batchNo)}">${esc(b.batchNo)} (${fmtQty(b.qty, p.unit)})${warn}</option>`;
+            }).join('');
+        }
+
+        function updateBatchSelectOptions() {
+            const prodSel = document.getElementById('sale-prod-select');
+            const batchSel = document.getElementById('sale-batch-select');
+            if (!prodSel || !batchSel) return;
+            batchSel.innerHTML = renderBatchOptionsHtml(prodSel.value);
+        }
+
+        function onDraftBuyerChange(buyerId) {
+            saleDraft.buyerId = buyerId;
+            const b = state.buyers.find(x => x.id === buyerId);
+            saleDraft.shopId = b && b.shops[0] ? b.shops[0].id : '';
+            renderApp();
+        }
+
+        function onDraftShopChange(shopId) {
+            saleDraft.shopId = shopId;
+            renderApp();
+        }
+
+        function addDraftItem() {
+            const prodId = document.getElementById('sale-prod-select')?.value;
+            const batchNo = document.getElementById('sale-batch-select')?.value;
+            let qty = parseFloat(document.getElementById('sale-qty-input')?.value);
+            const prod = state.warehouse.find(p => p.id === prodId);
+            if (!prod || !batchNo) { showToast('Выберите товар и партию', 'error'); return; }
+            const batch = prod.batches.find(b => b.batchNo === batchNo);
+            if (!batch) return;
+
+            if (daysUntil(batch.expDate) < 0) {
+                showToast(`Партия ${batchNo} просрочена! Продажа запрещена.`, 'error');
+                return;
+            }
+            if (isNaN(qty) || qty <= 0) { showToast('Укажите корректное количество', 'error'); return; }
+            qty = prod.unit === 'шт' ? Math.max(1, Math.round(qty)) : round2(qty);
+
+            const existing = saleDraft.items.find(i => i.productId === prodId && i.batchNo === batchNo);
+            const totalReq = round2((existing ? existing.qty : 0) + qty);
+            if (totalReq > batch.qty) {
+                showToast(`В партии ${batchNo} доступно только ${fmtQty(batch.qty, prod.unit)}`, 'error');
+                return;
+            }
+            if (existing) existing.qty = totalReq;
+            else saleDraft.items.push({ productId: prod.id, batchNo, name: prod.name, unit: prod.unit, price: prod.price, qty });
+            renderApp();
+        }
+
+        function removeDraftItem(idx) {
+            saleDraft.items.splice(idx, 1);
+            renderApp();
+        }
+
+        function setQuickDiscount(v) {
+            saleDraft.discountPercent = v;
+            renderApp();
+        }
+
+        function payFullDraft() {
+            const gross = round2(saleDraft.items.reduce((s, i) => s + i.qty * i.price, 0));
+            const discPct = Math.max(0, Math.min(100, Number(saleDraft.discountPercent) || 0));
+            saleDraft.paidAmount = round2(gross - round2(gross * discPct / 100));
+            renderApp();
+        }
+
+        function onLiveDiscountChange(v) {
+            saleDraft.discountPercent = v === '' ? 0 : Math.max(0, Math.min(100, parseFloat(v) || 0));
+            updateLiveSaleCard();
+        }
+
+        function onLivePaidChange(v) {
+            saleDraft.paidAmount = v === '' ? 0 : Math.max(0, parseFloat(v) || 0);
+            updateLiveSaleCard();
+        }
+
+        function updateLiveSaleCard() {
+            const user = getActiveUser();
+            const gross = round2(saleDraft.items.reduce((s, i) => s + i.qty * i.price, 0));
+            const discPct = Math.max(0, Math.min(100, Number(saleDraft.discountPercent) || 0));
+            const discAmt = round2(gross * discPct / 100);
+            const payable = round2(gross - discAmt);
+            const paid = Math.max(0, Number(saleDraft.paidAmount) || 0);
+            const debt = round2(Math.max(0, payable - paid));
+            const comm = round2(Math.min(paid, payable) * (user.commissionRate || 0) / 100);
+            const exceeds = discPct > user.maxDiscount;
+
+            const set = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
+            set('live-gross', fmtMoney(gross));
+            set('live-disc-amt', '− ' + fmtMoney(discAmt));
+            set('live-payable', fmtMoney(payable));
+            set('live-debt', fmtMoney(debt));
+            set('live-comm', fmtMoney(comm));
+
+            const warn = document.getElementById('live-limit-warn');
+            if (warn) warn.classList.toggle('hidden', !exceeds);
+            const btn = document.getElementById('btn-confirm-sale');
+            if (btn) {
+                btn.textContent = exceeds ? 'Отправить на одобрение скидки' : 'Подтвердить продажу';
+                btn.className = `w-full py-3.5 rounded-2xl font-extrabold text-sm sm:text-base text-white shadow-md transition-all ${exceeds ? 'bg-amber-500 hover:bg-amber-600' : 'bg-brand-700 hover:bg-brand-800'}`;
+            }
+        }
+
+        function confirmNewSale() {
+            if (isSubmittingSale) return; // Защита от двойного нажатия
+            if (state.usedIdempotencyKeys.includes(saleDraft.idempotencyKey)) {
+                showToast('Повторная отправка накладной заблокирована (Idempotency Key)', 'warning');
+                return;
+            }
+            if (saleDraft.items.length === 0) {
+                showToast('Добавьте хотя бы один товар', 'error');
+                return;
+            }
+            const user = getActiveUser();
+            const { buyer, shop } = findBuyerAndShop(saleDraft.buyerId, saleDraft.shopId);
+            if (!buyer || !shop) return;
+
+            // Проверка остатков по партиям
+            for (const it of saleDraft.items) {
+                const p = state.warehouse.find(x => x.id === it.productId);
+                const b = p?.batches.find(x => x.batchNo === it.batchNo);
+                if (!b || b.qty < it.qty) {
+                    showToast(`Недостаточно товара «${it.name}» в партии ${it.batchNo}`, 'error');
+                    return;
+                }
+            }
+
+            isSubmittingSale = true;
+            const discPct = round2(Math.max(0, Math.min(100, Number(saleDraft.discountPercent) || 0)));
+            const gross = round2(saleDraft.items.reduce((s, i) => s + i.qty * i.price, 0));
+            const payable = round2(gross - round2(gross * discPct / 100));
+            const paidInitial = round2(Math.min(Math.max(0, Number(saleDraft.paidAmount) || 0), payable));
+            const exceeds = discPct > user.maxDiscount;
+
+            const newId = 'FR-' + state.nextInvoiceNo++;
+            const sale = {
+                id: newId,
+                idempotencyKey: saleDraft.idempotencyKey,
+                createdAt: new Date().toISOString(),
+                employeeId: user.id,
+                employeeName: user.name,
+                employeePhone: user.phone,
+                commissionRate: user.commissionRate || 0,
+                buyerId: buyer.id,
+                buyerName: buyer.name,
+                shopId: shop.id,
+                shopName: shop.name,
+                status: exceeds ? 'pending_approval' : 'confirmed',
+                items: saleDraft.items.map(i => ({ ...i, returnedQty: 0 })),
+                discountPercent: discPct,
+                paidInitial,
+                debtPaid: 0,
+                cashRefunded: 0,
+                returns: []
+            };
+
+            state.usedIdempotencyKeys.push(sale.idempotencyKey);
+            state.sales.unshift(sale);
+
+            if (!exceeds) {
+                deductInventoryForSale(sale);
+                addLog(`${user.name} (${user.roleLabel})`, 'sale', `Оформлена продажа ${newId} (скидка ${discPct}%)`,
+                    `${buyer.name} (${shop.name}). К оплате: ${fmtMoney(payable)}, получено: ${fmtMoney(paidInitial)}.`);
+            } else {
+                addLog(`${user.name} (${user.roleLabel})`, 'discount_req', `Запрос скидки ${discPct}% по ${newId}`,
+                    `Лимит сотрудника: ${user.maxDiscount}%. Отправлено на одобрение.`);
+            }
+
+            saleDraft = createEmptyDraft();
+            saleDraft.buyerId = buyer.id;
+            saleDraft.shopId = shop.id;
+            saveState();
+            isSubmittingSale = false;
+            renderApp();
+
+            if (!exceeds) {
+                showToast(`Продажа ${newId} сохранена в облаке!`, 'success');
+                openConfirmedOrderModal(newId); // Шаг 3: сразу открывается экран подтверждённого заказа с кнопкой «ПЕЧАТАТЬ ЧЕК»
+            } else {
+                showToast(`Накладная ${newId} отправлена на подтверждение скидки ${discPct}%`, 'warning');
+            }
+        }
+
+        function deductInventoryForSale(sale) {
+            const { shop } = findBuyerAndShop(sale.buyerId, sale.shopId);
+            for (const it of sale.items) {
+                const p = state.warehouse.find(x => x.id === it.productId);
+                const b = p?.batches.find(x => x.batchNo === it.batchNo);
+                if (b) b.qty = round2(Math.max(0, b.qty - it.qty));
+                if (shop) {
+                    const si = shop.inventory.find(x => x.productId === it.productId);
+                    if (si) si.qty = round2(si.qty + it.qty);
+                    else shop.inventory.push({ productId: it.productId, name: it.name, unit: it.unit, qty: it.qty });
+                }
+            }
+        }
+
+        function approvePendingSale(saleId) {
+            const sale = state.sales.find(s => s.id === saleId);
+            if (!sale || sale.status !== 'pending_approval') return;
+            for (const it of sale.items) {
+                const p = state.warehouse.find(x => x.id === it.productId);
+                const b = p?.batches.find(x => x.batchNo === it.batchNo);
+                if (!b || b.qty < it.qty) {
+                    showToast(`Недостаточно товара «${it.name}» в партии ${it.batchNo}`, 'error');
+                    return;
+                }
+            }
+            sale.status = 'confirmed';
+            deductInventoryForSale(sale);
+            const u = getActiveUser();
+            addLog(`${u.name} (${u.roleLabel})`, 'approval', `Одобрена скидка ${sale.discountPercent}% по ${sale.id}`,
+                `Накладная проведена, остатки склада и финансы обновлены.`);
+            saveState();
+            renderApp();
+            showToast(`Продажа ${sale.id} одобрена и проведена`, 'success');
+        }
+
+        function rejectPendingSale(saleId) {
+            const sale = state.sales.find(s => s.id === saleId);
+            if (!sale) return;
+            sale.status = 'rejected';
+            const u = getActiveUser();
+            addLog(`${u.name} (${u.roleLabel})`, 'approval', `Отклонён запрос скидки по ${sale.id}`, `Запрашивалась скидка ${sale.discountPercent}%.`);
+            saveState();
+            renderApp();
+            showToast(`Запрос ${sale.id} отклонён`, 'warning');
+        }
+
+        /* =========================================================================
+           9. ЭКРАН ПОДТВЕРЖДЁННОГО ЗАКАЗА И BLUETOOTH ESC/POS ПЕЧАТЬ ЧЕКА
+           ========================================================================= */
+        function buildReceiptText(sale) {
+            const f = calcSaleFinancials(sale);
+            const w = state.printer.paperWidth === 80 ? 44 : 32;
+            const sep = '-'.repeat(w);
+            const center = (txt) => {
+                const pad = Math.max(0, Math.floor((w - txt.length) / 2));
+                return ' '.repeat(pad) + txt;
+            };
+            const row = (l, r) => {
+                const space = Math.max(1, w - l.length - r.length);
+                return l + ' '.repeat(space) + r;
+            };
+
+            const lines = [
+                center('ООО ФАЙЗИ РАСУЛ — ОПТ'),
+                center('ФАЙЗИ РАСУЛ'),
+                center('Молочная и мясная продукция'),
+                sep,
+                row('Чек №:', sale.id),
+                row('Дата:', fmtDateTime(sale.createdAt)),
+                `Сотр: ${sale.employeeName}`,
+                `Тел:  ${sale.employeePhone}`,
+                sep,
+                `Покупатель: ${sale.buyerName}`,
+                `Магазин:    ${sale.shopName}`,
+                sep
+            ];
+
+            for (const it of sale.items) {
+                const activeQty = round2(it.qty - (it.returnedQty || 0));
+                if (activeQty <= 0) continue;
+                lines.push(it.name);
+                lines.push(row(`  ${fmtQty(activeQty, it.unit)} x ${round2(it.price).toFixed(2)}`, `${round2(activeQty * it.price).toFixed(2)} с.`));
+            }
+
+            lines.push(sep);
+            lines.push(row('Сумма до скидки:', `${f.activeGross.toFixed(2)} с.`));
+            lines.push(row(`ОБЩАЯ СКИДКА (${f.discountPercent}%):`, `-${f.discountAmount.toFixed(2)} с.`));
+            lines.push(row('ИТОГО К ОПЛАТЕ:', `${f.finalPayable.toFixed(2)} с.`));
+            lines.push(row('Факт. оплата:', `${f.effectivePaid.toFixed(2)} с.`));
+            lines.push(row('Задолженность:', `${f.debt.toFixed(2)} с.`));
+            lines.push(sep);
+            lines.push(center('Спасибо за сотрудничество!'));
+            lines.push(center('Файзи Расул • Таджикистан'));
+            return lines.join('\n');
+        }
+
+        function buildEscPosHexPreview(text) {
+            // Имитация реального ESC/POS заголовка: ESC @ (Init), ESC t 17 (CP866), текст, GS V 66 0 (Cut)
+            const header = '1B 40 1B 74 11 1B 61 01';
+            const sampleBytes = Array.from(text.slice(0, 28)).map(c => c.charCodeAt(0).toString(16).padStart(2, '0').toUpperCase()).join(' ');
+            const footer = '0A 0A 0A 1D 56 42 00';
+            return `${header} [DATA: ${sampleBytes} ...] ${footer}`;
+        }
+
+        function openConfirmedOrderModal(saleId) {
+            const sale = state.sales.find(s => s.id === saleId);
+            if (!sale) return;
+            const f = calcSaleFinancials(sale);
+            const pr = state.printer;
+            const btReady = pr.connected && !pr.simDisconnected && !pr.simNoPaper;
+
+            openModal(`
+                <div class="p-5 sm:p-6 overflow-y-auto space-y-4">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-2xl bg-emerald-100 text-brand-700 flex items-center justify-center shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-extrabold text-slate-900">Заказ ${esc(sale.id)} подтверждён</h3>
+                                <p class="text-xs text-slate-500">Сохранено в облаке • Остатки и финансы обновлены</p>
+                            </div>
+                        </div>
+                        <button onclick="closeModal()" class="p-1.5 rounded-xl hover:bg-slate-100 text-slate-400 text-xl leading-none">&times;</button>
+                    </div>
+
+                    <!-- Статус подключённого Bluetooth-принтера -->
+                    <div class="p-3.5 rounded-2xl border flex flex-wrap items-center justify-between gap-2 text-xs ${
+                        btReady ? 'bg-brand-50 border-brand-200 text-brand-900' : 'bg-rose-50 border-rose-200 text-rose-800'
+                    }">
+                        <div>
+                            <div class="font-bold">Принтер: ${pr.connected ? esc(pr.deviceName) : 'Не сопряжён'}</div>
+                            <div class="opacity-80">Протокол: ${pr.protocol} • Бумага: ${pr.paperWidth} мм • ${btReady ? 'Готов к мгновенной печати' : (pr.simNoPaper ? 'Ошибка: Нет бумаги!' : 'Ошибка: Принтер отключён!')}</div>
+                        </div>
+                        <button onclick="closeModal(); navigate('printer')" class="underline font-bold">Настройки BT</button>
+                    </div>
+
+                    <!-- Главная кнопка ПЕЧАТАТЬ ЧЕК -->
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="triggerThermalPrint('${sale.id}', false)"
+                            class="flex-1 py-3.5 px-4 rounded-2xl bg-brand-700 hover:bg-brand-800 text-white font-extrabold text-sm sm:text-base shadow-md flex items-center justify-center gap-2 transition-all">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                            </svg>
+                            <span>ПЕЧАТАТЬ ЧЕК</span>
+                        </button>
+                        <button onclick="triggerThermalPrint('${sale.id}', true)"
+                            class="px-4 py-3.5 rounded-2xl border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-xs sm:text-sm">
+                            Повторная печать
+                        </button>
+                    </div>
+
+                    <!-- Зона визуализации напечатанного термочека -->
+                    <div id="thermal-output-wrap" class="hidden space-y-3 pt-2">
+                        <div class="flex items-center justify-between text-xs text-slate-500">
+                            <span id="thermal-status-label" class="font-bold text-brand-700">Печать завершена (${pr.paperWidth} мм)</span>
+                            <div class="flex gap-2">
+                                <button onclick="printReceiptSystem('${sale.id}')" class="text-brand-700 font-bold hover:underline">Системная печать</button>
+                                <button onclick="document.getElementById('escpos-raw-box').classList.toggle('hidden')" class="text-slate-600 font-semibold hover:underline">ESC/POS буфер</button>
+                            </div>
+                        </div>
+                        <div class="bg-slate-200/70 p-4 rounded-2xl flex justify-center">
+                            <pre id="thermal-paper-content" class="receipt-paper p-4 font-mono text-[11px] leading-snug text-slate-900 whitespace-pre overflow-x-auto ${pr.paperWidth === 80 ? 'w-[340px]' : 'w-[260px]'}"></pre>
+                        </div>
+                        <div id="escpos-raw-box" class="hidden p-3 rounded-xl bg-slate-900 text-emerald-400 font-mono text-[10px] break-all"></div>
+                    </div>
+
+                    <!-- Краткая сводка заказа -->
+                    <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100 text-center">
+                        <div class="p-2.5 rounded-xl bg-slate-50">
+                            <div class="text-[10px] text-slate-500 uppercase">К оплате</div>
+                            <div class="text-sm font-extrabold text-slate-900">${fmtMoney(f.finalPayable)}</div>
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-emerald-50">
+                            <div class="text-[10px] text-brand-700 uppercase">Оплачено</div>
+                            <div class="text-sm font-extrabold text-brand-800">${fmtMoney(f.effectivePaid)}</div>
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-rose-50">
+                            <div class="text-[10px] text-rose-700 uppercase">Долг</div>
+                            <div class="text-sm font-extrabold text-rose-700">${fmtMoney(f.debt)}</div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+
+        function triggerThermalPrint(saleId, isReprint) {
+            const pr = state.printer;
+            if (!pr.connected || pr.simDisconnected) {
+                showToast('Ошибка Bluetooth: принтер отключён! Проверьте питание и сопряжение.', 'error');
+                return;
+            }
+            if (pr.simNoPaper) {
+                showToast('Ошибка принтера: в термопринтере закончилась бумага!', 'error');
+                return;
+            }
+            const sale = state.sales.find(s => s.id === saleId);
+            if (!sale) return;
+
+            const receiptText = buildReceiptText(sale);
+            const wrap = document.getElementById('thermal-output-wrap');
+            const paper = document.getElementById('thermal-paper-content');
+            const rawBox = document.getElementById('escpos-raw-box');
+            const label = document.getElementById('thermal-status-label');
+
+            if (wrap && paper) {
+                wrap.classList.remove('hidden');
+                paper.classList.remove('thermal-printing');
+                void paper.offsetWidth; // перезапуск анимации
+                paper.textContent = receiptText;
+                paper.classList.add('thermal-printing');
+                if (rawBox) rawBox.textContent = 'ESC/POS HEX: ' + buildEscPosHexPreview(receiptText);
+                if (label) label.textContent = `${isReprint ? 'Повторная печать' : 'Напечатано'} на ${pr.deviceName} (${pr.paperWidth} мм)`;
+            }
+
+            pr.lastPrintAt = new Date().toISOString();
+            saveState();
+            showToast(`${isReprint ? 'Повторный чек' : 'Чек'} ${sale.id} отправлен на ${pr.deviceName}`, 'success');
+        }
+
+        function printReceiptSystem(saleId) {
+            const sale = state.sales.find(s => s.id === saleId);
+            if (!sale) return;
+            const printArea = document.getElementById('print-area');
+            printArea.innerHTML = `<pre style="font-family: monospace; font-size: 12px; white-space: pre-wrap;">${esc(buildReceiptText(sale))}</pre>`;
+            window.print();
+        }
+
+        /* =========================================================================
+           10. ВОЗВРАТЫ (ЧАСТИЧНЫЙ И ПОЛНЫЙ С ПЕРЕСЧЁТОМ СКИДКИ, ДОЛГА И КОМИССИИ)
+           ========================================================================= */
+        function openReturnModal(saleId) {
+            const sale = state.sales.find(s => s.id === saleId);
+            if (!sale || sale.status !== 'confirmed') return;
+            openModal(`
+                <div class="p-5 sm:p-6 overflow-y-auto space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-extrabold text-slate-900">Возврат по накладной ${esc(sale.id)}</h3>
+                        <button onclick="closeModal()" class="text-slate-400 text-xl">&times;</button>
+                    </div>
+                    <p class="text-xs text-slate-500">
+                        Скидка исходной накладной: <strong class="text-brand-700">${sale.discountPercent}%</strong>.
+                        Возвращаемый товар зачисляется обратно на склад, долг и комиссия сотрудника пересчитываются автоматически.
+                    </p>
+                    <div class="space-y-2 max-h-60 overflow-y-auto">
+                        ${sale.items.map((it, idx) => {
+                            const avail = round2(it.qty - (it.returnedQty || 0));
+                            return `
+                                <div class="p-3 rounded-2xl border border-slate-200 flex items-center justify-between gap-2 ${avail <= 0 ? 'opacity-50' : ''}">
+                                    <div class="text-xs">
+                                        <div class="font-bold text-slate-900">${esc(it.name)}</div>
+                                        <div class="text-slate-500">Партия ${esc(it.batchNo)} • Доступно: <strong>${fmtQty(avail, it.unit)}</strong> × ${fmtMoney(it.price)}</div>
+                                    </div>
+                                    <input id="ret-in-${idx}" type="number" min="0" max="${avail}" step="${it.unit === 'шт' ? '1' : '0.1'}" value="0" ${avail <= 0 ? 'disabled' : ''}
+                                        class="w-20 rounded-xl border border-slate-300 px-2 py-1.5 text-center text-sm font-bold outline-none focus:ring-2 focus:ring-amber-500">
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button onclick="closeModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-sm font-semibold">Отмена</button>
+                        <button onclick="confirmReturn('${sale.id}')" class="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold">Провести возврат</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        function confirmReturn(saleId) {
+            const sale = state.sales.find(s => s.id === saleId);
+            if (!sale) return;
+            const entries = [];
+            let grossRet = 0;
+
+            for (let i = 0; i < sale.items.length; i++) {
+                const it = sale.items[i];
+                const avail = round2(it.qty - (it.returnedQty || 0));
+                let val = parseFloat(document.getElementById(`ret-in-${i}`)?.value) || 0;
+                if (val <= 0) continue;
+                val = it.unit === 'шт' ? Math.round(val) : round2(val);
+                if (val > avail) { showToast(`Превышен остаток для «${it.name}»`, 'error'); return; }
+                entries.push({ it, val });
+                grossRet = round2(grossRet + val * it.price);
+            }
+            if (entries.length === 0) { showToast('Укажите количество для возврата', 'warning'); return; }
+
+            const { shop } = findBuyerAndShop(sale.buyerId, sale.shopId);
+            for (const e of entries) {
+                e.it.returnedQty = round2((e.it.returnedQty || 0) + e.val);
+                // Возврат на центральный склад в исходную партию
+                const p = state.warehouse.find(x => x.id === e.it.productId);
+                const b = p?.batches.find(x => x.batchNo === e.it.batchNo);
+                if (b) b.qty = round2(b.qty + e.val);
+                // Уменьшение в магазине
+                if (shop) {
+                    const si = shop.inventory.find(x => x.productId === e.it.productId);
+                    if (si) si.qty = round2(Math.max(0, si.qty - e.val));
+                }
+            }
+
+            const netReturn = round2(grossRet * (1 - sale.discountPercent / 100));
+            const tempF = calcSaleFinancials(sale);
+            let cashRefund = 0;
+            if (tempF.effectivePaid > tempF.finalPayable) {
+                cashRefund = round2(tempF.effectivePaid - tempF.finalPayable);
+                sale.cashRefunded = round2((sale.cashRefunded || 0) + cashRefund);
+            }
+            const newF = calcSaleFinancials(sale);
+            sale.returns.push({ id: 'RET-' + Date.now(), date: new Date().toISOString(), grossRet, netReturn, cashRefund });
+
+            const u = getActiveUser();
+            addLog(`${u.name} (${u.roleLabel})`, 'return', `Возврат по ${sale.id} на ${fmtMoney(netReturn)}`,
+                `Учтена скидка ${sale.discountPercent}%. Новый долг: ${fmtMoney(newF.debt)}, комиссия: ${fmtMoney(newF.commission)}.${cashRefund > 0 ? ` Возврат наличных: ${fmtMoney(cashRefund)}.` : ''}`);
+
+            saveState();
+            closeModal();
+            renderApp();
+            showToast(`Возврат на ${fmtMoney(netReturn)} проведён. Комиссия пересчитана.`, 'success');
+        }
+
+        /* =========================================================================
+           11. ВКЛАДКА 2: ЦЕНТРАЛЬНЫЙ СКЛАД, ПАРТИИ, СРОКИ ГОДНОСТИ И ПРИЁМКА
+           ========================================================================= */
+        function renderWarehouseTab(user) {
+            const totalVal = round2(state.warehouse.reduce((s, p) => s + getProductStock(p) * p.price, 0));
+            let expiringSoon = 0, expired = 0;
+            state.warehouse.forEach(p => p.batches.forEach(b => {
+                if (b.qty <= 0) return;
+                const d = daysUntil(b.expDate);
+                if (d < 0) expired++;
+                else if (d <= 5) expiringSoon++;
+            }));
+
+            return `
+                <div class="space-y-5">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <h1 class="text-xl font-extrabold text-slate-900">Центральный склад</h1>
+                            <p class="text-xs text-slate-500">Общая стоимость остатков: <strong class="text-slate-900">${fmtMoney(totalVal)}</strong> • Партии: скоро истекают (${expiringSoon}), просрочено (${expired})</p>
+                        </div>
+                        ${user.canReceiveStock || isManager(user) ? `
+                            <button onclick="openReceiveBatchModal()" class="px-4 py-2.5 rounded-2xl bg-brand-700 hover:bg-brand-800 text-white text-xs sm:text-sm font-bold shadow-sm">
+                                + Приёмка партии
+                            </button>
+                        ` : `<span class="text-xs text-slate-400">Приёмка недоступна для вашей роли</span>`}
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${state.warehouse.map(p => {
+                            const totalQty = getProductStock(p);
+                            return `
+                                <div class="bg-white rounded-3xl border border-slate-200 p-4 sm:p-5 shadow-xs space-y-3">
+                                    <div class="flex items-start justify-between gap-2">
+                                        <div>
+                                            <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase ${p.category === 'Молочная' ? 'bg-sky-100 text-sky-800' : 'bg-rose-100 text-rose-800'}">${esc(p.category)}</span>
+                                            <h3 class="font-extrabold text-slate-900 mt-1">${esc(p.name)}</h3>
+                                            <div class="text-xs text-slate-500">Цена опт: <strong class="text-slate-800">${fmtMoney(p.price)} / ${p.unit}</strong></div>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="text-[10px] uppercase font-bold text-slate-400">Остаток</div>
+                                            <div class="text-lg font-extrabold text-brand-700">${fmtQty(totalQty, p.unit)}</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-1.5 pt-2 border-t border-slate-100">
+                                        <div class="text-[11px] font-bold uppercase text-slate-400">Партии и сроки годности</div>
+                                        ${p.batches.filter(b => b.qty > 0).map(b => {
+                                            const d = daysUntil(b.expDate);
+                                            const statusCls = d < 0
+                                                ? 'bg-rose-50 border-rose-200 text-rose-800'
+                                                : d <= 5
+                                                    ? 'bg-amber-50 border-amber-200 text-amber-900'
+                                                    : 'bg-emerald-50/70 border-emerald-200/70 text-brand-900';
+                                            const statusTxt = d < 0 ? 'Просрочен!' : d <= 5 ? `Истекает (${d} дн.)` : `В норме (${d} дн.)`;
+                                            return `
+                                                <div class="px-3 py-2 rounded-xl border text-xs flex flex-wrap items-center justify-between gap-2 ${statusCls}">
+                                                    <div>
+                                                        <span class="font-bold">${esc(b.batchNo)}</span>
+                                                        <span class="opacity-75 ml-1">до ${fmtDate(b.expDate)}</span>
+                                                    </div>
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="font-semibold">${statusTxt}</span>
+                                                        <span class="font-extrabold bg-white/80 px-2 py-0.5 rounded-lg">${fmtQty(b.qty, p.unit)}</span>
+                                                    </div>
+                                                </div>
+                                            `;
+                                        }).join('') || `<div class="text-xs text-slate-400 italic">Нет активных партий</div>`}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function openReceiveBatchModal() {
+            openModal(`
+                <div class="p-5 sm:p-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-extrabold text-slate-900">Приёмка новой партии на склад</h3>
+                        <button onclick="closeModal()" class="text-slate-400 text-xl">&times;</button>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Товар</label>
+                            <select id="rec-prod" class="w-full rounded-2xl border border-slate-300 px-3 py-2.5 text-sm font-semibold bg-white">
+                                ${state.warehouse.map(p => `<option value="${p.id}">${esc(p.name)} (${p.unit})</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Номер партии</label>
+                                <input id="rec-batch" type="text" value="PR-${Math.floor(1000 + Math.random() * 9000)}" class="w-full rounded-2xl border border-slate-300 px-3 py-2 text-sm font-bold">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Количество (кг / шт)</label>
+                                <input id="rec-qty" type="number" min="0.5" step="any" value="50" class="w-full rounded-2xl border border-slate-300 px-3 py-2 text-sm font-bold">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Дата производства</label>
+                                <input id="rec-mfg" type="date" value="${addDaysISO(0)}" class="w-full rounded-2xl border border-slate-300 px-3 py-2 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Срок годности до</label>
+                                <input id="rec-exp" type="date" value="${addDaysISO(14)}" class="w-full rounded-2xl border border-slate-300 px-3 py-2 text-sm">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button onclick="closeModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-sm font-semibold">Отмена</button>
+                        <button onclick="confirmReceiveBatch()" class="px-5 py-2 rounded-xl bg-brand-700 hover:bg-brand-800 text-white text-sm font-bold">Принять на склад</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        function confirmReceiveBatch() {
+            const prodId = document.getElementById('rec-prod')?.value;
+            const batchNo = (document.getElementById('rec-batch')?.value || '').trim();
+            let qty = parseFloat(document.getElementById('rec-qty')?.value);
+            const mfgDate = document.getElementById('rec-mfg')?.value;
+            const expDate = document.getElementById('rec-exp')?.value;
+            const p = state.warehouse.find(x => x.id === prodId);
+            if (!p || !batchNo || isNaN(qty) || qty <= 0) { showToast('Проверьте поля приёмки', 'error'); return; }
+
+            qty = p.unit === 'шт' ? Math.round(qty) : round2(qty);
+            p.batches.push({ batchNo, mfgDate, expDate, qty });
+
+            const u = getActiveUser();
+            addLog(`${u.name} (${u.roleLabel})`, 'receive', `Приёмка партии ${batchNo}: ${p.name}`,
+                `Количество: +${fmtQty(qty, p.unit)}, годен до ${fmtDate(expDate)}.`);
+            saveState();
+            closeModal();
+            renderApp();
+            showToast(`Партия ${batchNo} принята на склад`, 'success');
+        }
+
+        /* =========================================================================
+           12. ВКЛАДКА 3: ПОКУПАТЕЛИ, МАГАЗИНЫ, ХОЛОДИЛЬНИКИ И ПОГАШЕНИЕ ДОЛГОВ
+           ========================================================================= */
+        function renderShopsAndFridgesTab() {
+            return `
+                <div class="space-y-6">
+                    <div>
+                        <h1 class="text-xl font-extrabold text-slate-900">Покупатели, магазины и холодильники</h1>
+                        <p class="text-xs text-slate-500">Контроль долгов торговых точек, приём оплат и учёт собственных холодильников компании «Файзи Расул»</p>
+                    </div>
+
+                    <!-- Холодильники компании -->
+                    <div class="bg-white rounded-3xl border border-slate-200 p-4 sm:p-5 shadow-xs">
+                        <h2 class="text-sm font-extrabold uppercase tracking-wide text-slate-500 mb-3">Собственные холодильники «Файзи Расул» (${state.fridges.length})</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            ${state.fridges.map(fr => {
+                                const { buyer, shop } = findShopById(fr.shopId);
+                                return `
+                                    <div class="p-3.5 rounded-2xl bg-sky-50/70 border border-sky-200/80 space-y-1.5">
+                                        <div class="flex items-center justify-between">
+                                            <span class="font-mono font-extrabold text-xs text-sky-900">${esc(fr.id)}</span>
+                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${fr.status === 'Исправен' ? 'bg-emerald-100 text-brand-800' : 'bg-amber-100 text-amber-800'}">${esc(fr.temp)} • ${esc(fr.status)}</span>
+                                        </div>
+                                        <div class="text-xs font-semibold text-slate-800">${esc(fr.model)}</div>
+                                        <div class="text-[11px] text-slate-600">Установлен: <strong>${shop ? esc(shop.name) : 'На складе'}</strong> ${buyer ? `(${esc(buyer.name)})` : ''}</div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Покупатели и их магазины -->
+                    <div class="space-y-4">
+                        ${state.buyers.map(b => `
+                            <div class="bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden">
+                                <div class="px-5 py-3.5 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+                                    <div>
+                                        <h3 class="font-extrabold text-slate-900">${esc(b.name)}</h3>
+                                        <div class="text-xs text-slate-500">${esc(b.phone)}</div>
+                                    </div>
+                                    <span class="text-xs font-bold text-slate-500">Торговых точек: ${b.shops.length}</span>
+                                </div>
+                                <div class="divide-y divide-slate-100">
+                                    ${b.shops.map(shop => {
+                                        const debt = getShopDebt(shop.id);
+                                        const shopFridges = state.fridges.filter(f => f.shopId === shop.id);
+                                        return `
+                                            <div class="p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                                                <div class="lg:col-span-5 space-y-2">
+                                                    <div class="font-bold text-slate-900">${esc(shop.name)}</div>
+                                                    <div class="text-xs text-slate-500">${esc(shop.address)}</div>
+                                                    <div class="flex flex-wrap items-center gap-2 pt-1">
+                                                        <span class="px-3 py-1.5 rounded-xl text-xs font-extrabold ${debt > 0 ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-emerald-50 text-brand-800 border border-emerald-200'}">
+                                                            Долг: ${fmtMoney(debt)}
+                                                        </span>
+                                                        ${debt > 0 ? `
+                                                            <button onclick="openDebtPayModal('${b.id}', '${shop.id}')"
+                                                                class="px-3.5 py-1.5 rounded-xl bg-brand-700 hover:bg-brand-800 text-white text-xs font-bold">
+                                                                Принять оплату долга
+                                                            </button>
+                                                        ` : ''}
+                                                    </div>
+                                                    ${shopFridges.length > 0 ? `<div class="text-[11px] text-sky-700 font-semibold">Холодильники: ${shopFridges.map(f => f.id).join(', ')}</div>` : ''}
+                                                </div>
+                                                <div class="lg:col-span-7">
+                                                    <div class="text-[11px] font-bold uppercase text-slate-400 mb-1.5">Товары в магазине / холодильнике</div>
+                                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                                        ${shop.inventory.filter(i => i.qty > 0).map(i => `
+                                                            <div class="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/70 flex justify-between items-center text-xs">
+                                                                <span class="text-slate-700 truncate pr-2">${esc(i.name)}</span>
+                                                                <span class="font-extrabold text-slate-900 shrink-0">${fmtQty(i.qty, i.unit)}</span>
+                                                            </div>
+                                                        `).join('') || `<div class="text-xs text-slate-400 italic">Нет остатков</div>`}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function openDebtPayModal(buyerId, shopId) {
+            const { buyer, shop } = findBuyerAndShop(buyerId, shopId);
+            const debt = getShopDebt(shopId);
+            openModal(`
+                <div class="p-6 space-y-4">
+                    <h3 class="text-lg font-extrabold text-slate-900">Принять оплату долга</h3>
+                    <p class="text-xs text-slate-600">${esc(buyer.name)} — <strong>${esc(shop.name)}</strong>. Текущий долг: <strong class="text-rose-600">${fmtMoney(debt)}</strong>. Оплата автоматически начислит комиссию сотруднику по закрытым накладным.</p>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Сумма оплаты (${CURRENCY})</label>
+                        <input id="debt-pay-in" type="number" min="1" max="${debt}" step="any" value="${debt}"
+                            class="w-full rounded-2xl border border-slate-300 px-4 py-2.5 text-lg font-extrabold outline-none focus:ring-2 focus:ring-brand-600">
+                    </div>
+                    <div class="flex justify-end gap-2">
+                        <button onclick="closeModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-sm font-semibold">Отмена</button>
+                        <button onclick="confirmDebtPay('${buyerId}', '${shopId}')" class="px-5 py-2 rounded-xl bg-brand-700 hover:bg-brand-800 text-white text-sm font-bold">Подтвердить оплату</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        function confirmDebtPay(buyerId, shopId) {
+            const { buyer, shop } = findBuyerAndShop(buyerId, shopId);
+            const maxDebt = getShopDebt(shopId);
+            let amt = round2(parseFloat(document.getElementById('debt-pay-in')?.value) || 0);
+            if (amt <= 0) { showToast('Введите сумму больше 0', 'error'); return; }
+            if (amt > maxDebt) amt = maxDebt;
+
+            let rem = amt;
+            const unpaid = state.sales.filter(s => s.status === 'confirmed' && s.shopId === shopId).reverse();
+            for (const s of unpaid) {
+                if (rem <= 0) break;
+                const f = calcSaleFinancials(s);
+                if (f.debt > 0) {
+                    const part = round2(Math.min(rem, f.debt));
+                    s.debtPaid = round2((s.debtPaid || 0) + part);
+                    rem = round2(rem - part);
+                }
+            }
+            const u = getActiveUser();
+            addLog(`${u.name} (${u.roleLabel})`, 'payment', `Погашение долга ${shop.name}: ${fmtMoney(amt)}`,
+                `Покупатель: ${buyer.name}. Комиссии сотрудников пересчитаны от фактически полученных денег.`);
+            saveState();
+            closeModal();
+            renderApp();
+            showToast(`Оплата долга ${fmtMoney(amt)} принята`, 'success');
+        }
+
+        /* =========================================================================
+           13. ВКЛАДКА 4: BLUETOOTH ESC/POS ПРИНТЕР ДЛЯ ANDROID
+           ========================================================================= */
+        const AVAILABLE_BT_DEVICES = [
+            { id: 'bt_xp300', name: 'Xprinter XP-P300 (SPP)', mac: '00:11:22:33:44:AA', protocol: 'SPP' },
+            { id: 'bt_rpp02', name: 'Rongta RPP02N (BLE)', mac: 'DC:0D:30:88:1F:2B', protocol: 'BLE' },
+            { id: 'bt_pos58', name: 'POS-5802DD (SPP)', mac: '66:12:4A:90:11:CC', protocol: 'SPP' }
+        ];
+
+        function renderPrinterTab() {
+            const pr = state.printer;
+            const btOk = pr.connected && !pr.simDisconnected;
+            return `
+                <div class="space-y-5">
+                    <div>
+                        <h1 class="text-xl font-extrabold text-slate-900">Мини Bluetooth-принтер (Android ESC/POS)</h1>
+                        <p class="text-xs text-slate-500">Однократное сопряжение • Автоматическая печать чеков без сторонних приложений • 58 мм и 80 мм</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                        <!-- Статус и настройки -->
+                        <div class="lg:col-span-7 space-y-4">
+                            <div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-xs space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center ${btOk ? 'bg-emerald-100 text-brand-700' : 'bg-rose-100 text-rose-600'}">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <div class="font-extrabold text-slate-900">${pr.connected ? esc(pr.deviceName) : 'Принтер не выбран'}</div>
+                                            <div class="text-xs text-slate-500">MAC: ${esc(pr.mac || '—')} • Статус: <strong class="${btOk ? 'text-brand-700' : 'text-rose-600'}">${btOk ? 'Подключён' : 'Отключён'}</strong></div>
+                                        </div>
+                                    </div>
+                                    ${pr.connected ? `<button onclick="disconnectPrinter()" class="px-3 py-1.5 rounded-xl bg-rose-50 text-rose-700 text-xs font-bold">Отключить</button>` : ''}
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">Протокол Android</label>
+                                        <div class="grid grid-cols-2 gap-1.5">
+                                            ${['SPP', 'BLE'].map(p => `
+                                                <button onclick="setPrinterProp('protocol', '${p}')" class="py-2 rounded-xl text-xs font-bold border ${pr.protocol === p ? 'bg-brand-700 text-white border-brand-700' : 'bg-slate-50 text-slate-700 border-slate-200'}">${p}</button>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">Ширина термоленты</label>
+                                        <div class="grid grid-cols-2 gap-1.5">
+                                            ${[58, 80].map(w => `
+                                                <button onclick="setPrinterProp('paperWidth', ${w})" class="py-2 rounded-xl text-xs font-bold border ${pr.paperWidth === w ? 'bg-brand-700 text-white border-brand-700' : 'bg-slate-50 text-slate-700 border-slate-200'}">${w} мм</button>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap gap-2 pt-2">
+                                    <button onclick="checkPrinterConnection()" class="px-4 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold">Проверить связь</button>
+                                    <button onclick="runTestPrint()" class="px-4 py-2.5 rounded-2xl bg-brand-700 hover:bg-brand-800 text-white text-xs font-bold">Тестовая печать</button>
+                                </div>
+                            </div>
+
+                            <!-- Поиск и однократное сопряжение -->
+                            <div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-xs space-y-3">
+                                <h2 class="text-sm font-extrabold text-slate-900">Доступные Bluetooth-устройства рядом</h2>
+                                <div class="space-y-2">
+                                    ${AVAILABLE_BT_DEVICES.map(d => {
+                                        const isCur = pr.connected && pr.deviceId === d.id;
+                                        return `
+                                            <div class="p-3 rounded-2xl border flex items-center justify-between gap-3 ${isCur ? 'border-brand-600 bg-brand-50/60' : 'border-slate-200'}">
+                                                <div>
+                                                    <div class="text-sm font-bold text-slate-900">${esc(d.name)}</div>
+                                                    <div class="text-[11px] text-slate-500 font-mono">${esc(d.mac)} • ${esc(d.protocol)}</div>
+                                                </div>
+                                                <button onclick="pairPrinter('${d.id}')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold ${isCur ? 'bg-emerald-100 text-brand-800' : 'bg-brand-700 text-white hover:bg-brand-800'}">
+                                                    ${isCur ? 'Сопряжён' : 'Подключить'}
+                                                </button>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Симуляция ошибок и тест-чек -->
+                        <div class="lg:col-span-5 space-y-4">
+                            <div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-xs space-y-3">
+                                <h2 class="text-sm font-extrabold text-slate-900">Тест обработки ошибок принтера</h2>
+                                <p class="text-xs text-slate-500">Включите тумблер, чтобы проверить, как приложение реагирует на сбой при печати чека.</p>
+                                <label class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-200 cursor-pointer">
+                                    <span class="text-xs font-bold text-slate-800">Симуляция: «Нет бумаги»</span>
+                                    <input type="checkbox" ${pr.simNoPaper ? 'checked' : ''} onchange="setPrinterProp('simNoPaper', this.checked)" class="w-4 h-4 accent-rose-600">
+                                </label>
+                                <label class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-200 cursor-pointer">
+                                    <span class="text-xs font-bold text-slate-800">Симуляция: «Принтер отключён»</span>
+                                    <input type="checkbox" ${pr.simDisconnected ? 'checked' : ''} onchange="setPrinterProp('simDisconnected', this.checked)" class="w-4 h-4 accent-rose-600">
+                                </label>
+                            </div>
+                            <div id="test-print-preview" class="hidden bg-slate-200/70 p-4 rounded-3xl flex justify-center"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function setPrinterProp(key, val) {
+            state.printer[key] = val;
+            saveState();
+            renderApp();
+        }
+
+        function pairPrinter(devId) {
+            const d = AVAILABLE_BT_DEVICES.find(x => x.id === devId);
+            if (!d) return;
+            state.printer.connected = true;
+            state.printer.deviceId = d.id;
+            state.printer.deviceName = d.name;
+            state.printer.mac = d.mac;
+            state.printer.protocol = d.protocol;
+            state.printer.simDisconnected = false;
+            saveState();
+            renderApp();
+            showToast(`Принтер ${d.name} сопряжён и сохранён`, 'success');
+        }
+
+        function disconnectPrinter() {
+            state.printer.connected = false;
+            saveState();
+            renderApp();
+            showToast('Bluetooth-принтер отключён', 'warning');
+        }
+
+        function checkPrinterConnection() {
+            const pr = state.printer;
+            if (!pr.connected || pr.simDisconnected) {
+                showToast('Связь отсутствует! Проверьте Bluetooth и питание принтера.', 'error');
+            } else if (pr.simNoPaper) {
+                showToast('Связь установлена, но датчик сообщает: НЕТ БУМАГИ.', 'warning');
+            } else {
+                showToast(`Соединение стабильно: ${pr.deviceName} (${pr.protocol}, ${pr.paperWidth}мм)`, 'success');
+            }
+        }
+
+        function runTestPrint() {
+            const pr = state.printer;
+            if (!pr.connected || pr.simDisconnected) { showToast('Ошибка: принтер отключён', 'error'); return; }
+            if (pr.simNoPaper) { showToast('Ошибка: нет бумаги в термопринтере', 'error'); return; }
+
+            const box = document.getElementById('test-print-preview');
+            if (box) {
+                box.classList.remove('hidden');
+                const w = pr.paperWidth === 80 ? 'w-[320px]' : 'w-[240px]';
+                box.innerHTML = `
+                    <pre class="receipt-paper thermal-printing p-4 font-mono text-[11px] text-slate-900 ${w}">
+    ООО ФАЙЗИ РАСУЛ — ОПТ
+       ТЕСТОВАЯ ПЕЧАТЬ
+------------------------------
+Принтер: ${esc(pr.deviceName)}
+Протокол: ${esc(pr.protocol)}
+Лента: ${pr.paperWidth} мм
+Кодировка: CP866 (Кириллица OK)
+Дата: ${fmtDateTime(new Date().toISOString())}
+------------------------------
+      ПЕЧАТЬ ИСПРАВНА!
+</pre>`;
+            }
+            showToast('Тестовый чек успешно напечатан', 'success');
+        }
+
+        /* =========================================================================
+           14. ВКЛАДКА 5: ИНВЕНТАРИЗАЦИЯ СКЛАДА
+           ========================================================================= */
+        function renderInventoryTab() {
+            let totalDiffMoney = 0;
+            return `
+                <div class="space-y-5">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <h1 class="text-xl font-extrabold text-slate-900">Инвентаризация центрального склада</h1>
+                            <p class="text-xs text-slate-500">Введите фактический остаток для расчёта излишков и недостач</p>
+                        </div>
+                        <button onclick="applyInventoryCount()" class="px-5 py-2.5 rounded-2xl bg-brand-700 hover:bg-brand-800 text-white text-xs sm:text-sm font-bold shadow-sm">
+                            Провести инвентаризацию
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs sm:text-sm text-left">
+                                <thead class="bg-slate-50 text-slate-500 text-[11px] uppercase">
+                                    <tr>
+                                        <th class="px-4 py-3">Товар</th>
+                                        <th class="px-4 py-3 text-right">Цена</th>
+                                        <th class="px-4 py-3 text-right">Учётный остаток</th>
+                                        <th class="px-4 py-3 text-center">Фактический остаток</th>
+                                        <th class="px-4 py-3 text-right">Расхождение</th>
+                                        <th class="px-4 py-3 text-right">Сумма расх.</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    ${state.warehouse.map(p => {
+                                        const acc = getProductStock(p);
+                                        const actual = inventoryInputs[p.id] !== undefined ? inventoryInputs[p.id] : acc;
+                                        const diff = round2(actual - acc);
+                                        const diffMoney = round2(diff * p.price);
+                                        totalDiffMoney = round2(totalDiffMoney + diffMoney);
+                                        return `
+                                            <tr>
+                                                <td class="px-4 py-3 font-semibold text-slate-900">${esc(p.name)}</td>
+                                                <td class="px-4 py-3 text-right whitespace-nowrap text-slate-500">${fmtMoney(p.price)}</td>
+                                                <td class="px-4 py-3 text-right whitespace-nowrap font-bold">${fmtQty(acc, p.unit)}</td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <input type="number" min="0" step="${p.unit === 'шт' ? '1' : '0.1'}" value="${actual}"
+                                                        onchange="setInventoryInput('${p.id}', this.value)"
+                                                        class="w-24 text-center rounded-xl border border-slate-300 px-2 py-1.5 font-bold outline-none focus:ring-2 focus:ring-brand-600">
+                                                </td>
+                                                <td class="px-4 py-3 text-right whitespace-nowrap font-bold ${diff < 0 ? 'text-rose-600' : diff > 0 ? 'text-brand-700' : 'text-slate-400'}">
+                                                    ${diff > 0 ? '+' : ''}${fmtQty(diff, p.unit)}
+                                                </td>
+                                                <td class="px-4 py-3 text-right whitespace-nowrap font-bold ${diffMoney < 0 ? 'text-rose-600' : diffMoney > 0 ? 'text-brand-700' : 'text-slate-400'}">
+                                                    ${diffMoney > 0 ? '+' : ''}${fmtMoney(diffMoney)}
+                                                </td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                                <tfoot class="bg-slate-50 font-extrabold">
+                                    <tr>
+                                        <td colspan="5" class="px-4 py-3 text-right text-slate-700">Итоговое расхождение по складу:</td>
+                                        <td class="px-4 py-3 text-right ${totalDiffMoney < 0 ? 'text-rose-600' : 'text-brand-700'}">${totalDiffMoney > 0 ? '+' : ''}${fmtMoney(totalDiffMoney)}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function setInventoryInput(prodId, val) {
+            const p = state.warehouse.find(x => x.id === prodId);
+            let n = Math.max(0, parseFloat(val) || 0);
+            if (p && p.unit === 'шт') n = Math.round(n);
+            else n = round2(n);
+            inventoryInputs[prodId] = n;
+            renderApp();
+        }
+
+        function applyInventoryCount() {
+            const changes = [];
+            for (const p of state.warehouse) {
+                const acc = getProductStock(p);
+                const actual = inventoryInputs[p.id] !== undefined ? inventoryInputs[p.id] : acc;
+                const diff = round2(actual - acc);
+                if (diff === 0) continue;
+
+                changes.push(`${p.name}: ${diff > 0 ? '+' : ''}${fmtQty(diff, p.unit)}`);
+                if (diff > 0) {
+                    if (p.batches.length > 0) p.batches[p.batches.length - 1].qty = round2(p.batches[p.batches.length - 1].qty + diff);
+                    else p.batches.push({ batchNo: 'INV-' + Date.now().toString().slice(-4), mfgDate: addDaysISO(0), expDate: addDaysISO(14), qty: diff });
+                } else {
+                    let rem = Math.abs(diff);
+                    for (const b of p.batches) {
+                        if (rem <= 0) break;
+                        const take = round2(Math.min(b.qty, rem));
+                        b.qty = round2(b.qty - take);
+                        rem = round2(rem - take);
+                    }
+                }
+            }
+
+            if (changes.length === 0) {
+                showToast('Расхождений не выявлено — инвентаризация сошлась 100%', 'info');
+                return;
+            }
+
+            const u = getActiveUser();
+            addLog(`${u.name} (${u.roleLabel})`, 'inventory', `Проведена инвентаризация склада`, `Корректировки: ${changes.join('; ')}`);
+            inventoryInputs = {};
+            saveState();
+            renderApp();
+            showToast('Инвентаризация проведена, остатки скорректированы', 'success');
+        }
+
+        /* =========================================================================
+           15. ВКЛАДКА 6: ОТЧЁТЫ ВЛАДЕЛЬЦА И ЭКСПОРТ EXCEL / PDF
+           ========================================================================= */
+        function renderReportsTab(user) {
+            const targetUsers = isManager(user)
+                ? state.users.filter(u => u.role === 'employee' || state.sales.some(s => s.employeeId === u.id))
+                : [user];
+
+            return `
+                <div class="space-y-5">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <h1 class="text-xl font-extrabold text-slate-900">${isManager(user) ? 'Отчёты по сотрудникам и экспорт' : 'Мой финансовый отчёт'}</h1>
+                            <p class="text-xs text-slate-500">Комиссия рассчитывается автоматически строго от фактически полученных денег после скидок и возвратов</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="exportReportExcel()" class="px-4 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs">
+                                Скачать Excel (.csv)
+                            </button>
+                            <button onclick="exportReportPDF()" class="px-4 py-2 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs">
+                                Экспорт PDF / Печать
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs sm:text-sm text-left">
+                                <thead class="bg-slate-50 text-slate-500 text-[11px] uppercase">
+                                    <tr>
+                                        <th class="px-4 py-3">Сотрудник</th>
+                                        <th class="px-4 py-3 text-center">Продаж</th>
+                                        <th class="px-4 py-3 text-right">До скидки</th>
+                                        <th class="px-4 py-3 text-right">Скидки</th>
+                                        <th class="px-4 py-3 text-right">К оплате</th>
+                                        <th class="px-4 py-3 text-right">Получено</th>
+                                        <th class="px-4 py-3 text-right">Долг</th>
+                                        <th class="px-4 py-3 text-right">Возвраты</th>
+                                        <th class="px-4 py-3 text-right">Комиссия</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    ${targetUsers.map(emp => {
+                                        const st = computeEmployeeStats(emp.id);
+                                        return `
+                                            <tr>
+                                                <td class="px-4 py-3">
+                                                    <div class="font-bold text-slate-900">${esc(emp.name)}</div>
+                                                    <div class="text-[11px] text-slate-400">Ставка: ${emp.commissionRate}% • Лимит: ${emp.maxDiscount}%</div>
+                                                </td>
+                                                <td class="px-4 py-3 text-center font-bold">${st.count}</td>
+                                                <td class="px-4 py-3 text-right whitespace-nowrap">${fmtMoney(st.gross)}</td>
+                                                <td class="px-4 py-3 text-right whitespace-nowrap text-rose-600">−${fmtMoney(st.discount)}</td>
+                                                <td class="px-4 py-3 text-right whitespace-nowrap font-semibold">${fmtMoney(st.payable)}</td>
+                                                <td class="px-4 py-3 text-right whitespace-nowrap font-bold text-brand-700">${fmtMoney(st.paid)}</td>
+                                                <td class="px-4 py-3 text-right whitespace-nowrap text-amber-700">${fmtMoney(st.debt)}</td>
+                                                <td class="px-4 py-3 text-right whitespace-nowrap text-slate-500">${fmtMoney(st.returns)}</td>
+                                                <td class="px-4 py-3 text-right whitespace-nowrap font-extrabold text-indigo-700">${fmtMoney(st.comm)}</td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function exportReportExcel() {
+            const headers = ['Сотрудник', 'Ставка %', 'Продаж', 'До скидки (TJS)', 'Скидки (TJS)', 'К оплате (TJS)', 'Факт. получено (TJS)', 'Долг (TJS)', 'Возвраты (TJS)', 'Комиссия (TJS)'];
+            const rows = [headers.join(';')];
+            const emps = state.users.filter(u => u.role === 'employee' || state.sales.some(s => s.employeeId === u.id));
+            for (const emp of emps) {
+                const st = computeEmployeeStats(emp.id);
+                rows.push([
+                    emp.name, emp.commissionRate, st.count,
+                    st.gross.toFixed(2), st.discount.toFixed(2), st.payable.toFixed(2),
+                    st.paid.toFixed(2), st.debt.toFixed(2), st.returns.toFixed(2), st.comm.toFixed(2)
+                ].join(';'));
+            }
+            // UTF-8 BOM для идеального открытия кириллицы в Microsoft Excel
+            const blob = new Blob(['\uFEFF' + rows.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Fayzi_Rasul_Report_${addDaysISO(0)}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('Файл Excel (.csv, UTF-8) успешно скачан', 'success');
+        }
+
+        function exportReportPDF() {
+            const emps = state.users.filter(u => u.role === 'employee' || state.sales.some(s => s.employeeId === u.id));
+            const printArea = document.getElementById('print-area');
+            printArea.innerHTML = `
+                <div style="font-family: Inter, sans-serif; padding: 20px;">
+                    <h2 style="margin:0 0 4px;">ООО «Файзи Расул» — Отчёт по сотрудникам</h2>
+                    <p style="margin:0 0 16px; font-size:12px; color:#555;">Сформировано: ${fmtDateTime(new Date().toISOString())}</p>
+                    <table style="width:100%; border-collapse:collapse; font-size:12px;">
+                        <thead>
+                            <tr style="background:#f1f5f9;">
+                                <th style="border:1px solid #ccc; padding:6px; text-align:left;">Сотрудник</th>
+                                <th style="border:1px solid #ccc; padding:6px;">Продаж</th>
+                                <th style="border:1px solid #ccc; padding:6px; text-align:right;">До скидки</th>
+                                <th style="border:1px solid #ccc; padding:6px; text-align:right;">Скидки</th>
+                                <th style="border:1px solid #ccc; padding:6px; text-align:right;">Получено</th>
+                                <th style="border:1px solid #ccc; padding:6px; text-align:right;">Долг</th>
+                                <th style="border:1px solid #ccc; padding:6px; text-align:right;">Комиссия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${emps.map(e => {
+                                const st = computeEmployeeStats(e.id);
+                                return `<tr>
+                                    <td style="border:1px solid #ccc; padding:6px;">${esc(e.name)} (${e.commissionRate}%)</td>
+                                    <td style="border:1px solid #ccc; padding:6px; text-align:center;">${st.count}</td>
+                                    <td style="border:1px solid #ccc; padding:6px; text-align:right;">${fmtMoney(st.gross)}</td>
+                                    <td style="border:1px solid #ccc; padding:6px; text-align:right;">${fmtMoney(st.discount)}</td>
+                                    <td style="border:1px solid #ccc; padding:6px; text-align:right;">${fmtMoney(st.paid)}</td>
+                                    <td style="border:1px solid #ccc; padding:6px; text-align:right;">${fmtMoney(st.debt)}</td>
+                                    <td style="border:1px solid #ccc; padding:6px; text-align:right; font-weight:bold;">${fmtMoney(st.comm)}</td>
+                                </tr>`;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            window.print();
+        }
+
+        /* =========================================================================
+           16. ВКЛАДКА 7: КОМАНДА, ПОДТВЕРЖДЕНИЕ АДМИНОВ И ПОДПИСКА (65 СОМОНИ/МЕС)
+           ========================================================================= */
+        function renderTeamAndSubscriptionTab(user) {
+            const sub = state.subscription;
+            const daysLeft = daysUntil(sub.expiresAt);
+            const ownerMode = isOwner(user);
+
+            return `
+                <div class="space-y-6">
+                    <!-- Блок подписки (Управление только у Владельца) -->
+                    <div class="bg-gradient-to-br from-brand-800 to-slate-900 rounded-3xl p-5 sm:p-6 text-white shadow-md">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="space-y-1">
+                                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-400/20 text-emerald-200 uppercase">Единая подписка на весь бизнес</span>
+                                <h2 class="text-xl font-extrabold">${esc(sub.planName)}</h2>
+                                <p class="text-xs text-slate-300">Тариф: <strong class="text-white">65 сомони / мес</strong> • Включает Владельца, Администраторов и всех Сотрудников</p>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-3">
+                                <div class="bg-white/10 rounded-2xl px-4 py-2.5 border border-white/15">
+                                    <div class="text-[10px] uppercase text-slate-300">Активна до</div>
+                                    <div class="text-base font-extrabold">${fmtDate(sub.expiresAt)} <span class="text-xs font-normal text-amber-300">(${daysLeft} дн.)</span></div>
+                                </div>
+                                ${ownerMode ? `
+                                    <button onclick="openRenewSubscriptionModal()" class="px-5 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-sm transition-colors">
+                                        Продлить подписку
+                                    </button>
+                                ` : `<div class="text-xs text-slate-300 bg-white/10 px-3 py-2 rounded-xl">Управление подпиской только у Владельца</div>`}
+                            </div>
+                        </div>
+
+                        <!-- История платежей -->
+                        <div class="mt-4 pt-4 border-t border-white/15">
+                            <div class="text-[11px] font-bold uppercase text-slate-300 mb-2">История оплат подписки</div>
+                            <div class="space-y-1.5">
+                                ${sub.payments.map(p => `
+                                    <div class="text-xs flex flex-wrap justify-between gap-2 bg-white/5 px-3 py-2 rounded-xl">
+                                        <span>${fmtDateTime(p.date)} • <strong>${p.months} мес.</strong> (${p.amount} сомони) • ${esc(p.method)}</span>
+                                        <span class="font-mono text-emerald-300">${esc(p.txCode)} • ${esc(p.status)}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Управление ролями, лимитами и подтверждением администраторов -->
+                    <div class="bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden">
+                        <div class="p-5 border-b border-slate-100">
+                            <h2 class="text-base font-extrabold text-slate-900">Команда, роли и разрешения</h2>
+                            <p class="text-xs text-slate-500">Владелец подтверждает Администраторов и настраивает лимиты скидок, ставки комиссий и право приёмки товаров.</p>
+                        </div>
+                        <div class="divide-y divide-slate-100">
+                            ${state.users.map(u => `
+                                <div class="p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                                    <div>
+                                        <div class="font-bold text-slate-900 flex items-center gap-2 flex-wrap">
+                                            <span>${esc(u.name)}</span>
+                                            <span class="px-2 py-0.5 rounded-full text-[11px] font-bold ${u.role === 'owner' ? 'bg-brand-100 text-brand-800' : u.role === 'admin' ? (u.adminApproved ? 'bg-indigo-100 text-indigo-800' : 'bg-amber-100 text-amber-800') : 'bg-sky-100 text-sky-800'}">
+                                                ${esc(u.roleLabel)} ${u.role === 'admin' ? (u.adminApproved ? '(Подтверждён)' : '(Ждёт подтверждения)') : ''}
+                                            </span>
+                                        </div>
+                                        <div class="text-xs text-slate-500 mt-0.5">${esc(u.phone)}</div>
+                                    </div>
+
+                                    <div class="flex flex-wrap items-end gap-3">
+                                        ${u.role === 'admin' && ownerMode ? `
+                                            <button onclick="toggleAdminApproval('${u.id}')"
+                                                class="px-4 py-2 rounded-xl text-xs font-bold ${u.adminApproved ? 'bg-rose-50 text-rose-700 hover:bg-rose-100' : 'bg-brand-700 text-white hover:bg-brand-800'}">
+                                                ${u.adminApproved ? 'Отозвать доступ админа' : 'Подтвердить администратора'}
+                                            </button>
+                                        ` : ''}
+
+                                        ${u.role === 'employee' ? `
+                                            <div>
+                                                <label class="block text-[10px] font-bold uppercase text-slate-400">Лимит скидки %</label>
+                                                <input id="lim-${u.id}" type="number" min="0" max="50" value="${u.maxDiscount}" class="w-20 rounded-xl border border-slate-300 px-2.5 py-1.5 text-sm font-bold">
+                                            </div>
+                                            <div>
+                                                <label class="block text-[10px] font-bold uppercase text-slate-400">Комиссия %</label>
+                                                <input id="com-${u.id}" type="number" min="0" max="30" step="0.5" value="${u.commissionRate}" class="w-20 rounded-xl border border-slate-300 px-2.5 py-1.5 text-sm font-bold">
+                                            </div>
+                                            <label class="flex items-center gap-1.5 text-xs font-semibold text-slate-700 pb-2 cursor-pointer">
+                                                <input id="rec-${u.id}" type="checkbox" ${u.canReceiveStock ? 'checked' : ''} class="w-4 h-4 accent-brand-700">
+                                                <span>Приёмка</span>
+                                            </label>
+                                            <button onclick="saveEmployeeConfig('${u.id}')" class="px-3.5 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold">Сохранить</button>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleAdminApproval(userId) {
+            if (!isOwner()) { showToast('Только владелец может подтверждать администраторов', 'error'); return; }
+            const u = state.users.find(x => x.id === userId && x.role === 'admin');
+            if (!u) return;
+            u.adminApproved = !u.adminApproved;
+            addLog(`${getActiveUser().name} (Владелец)`, 'role',
+                u.adminApproved ? `Подтверждён администратор: ${u.name}` : `Отозван доступ администратора: ${u.name}`,
+                'Изменение прав проверено и сохранено.');
+            saveState();
+            renderApp();
+            showToast(u.adminApproved ? `Администратор ${u.name} подтверждён` : `Доступ ${u.name} приостановлен`, 'success');
+        }
+
+        function saveEmployeeConfig(userId) {
+            const u = state.users.find(x => x.id === userId);
+            if (!u) return;
+            u.maxDiscount = round2(Math.max(0, Math.min(100, parseFloat(document.getElementById(`lim-${userId}`)?.value) || 0)));
+            u.commissionRate = round2(Math.max(0, Math.min(50, parseFloat(document.getElementById(`com-${userId}`)?.value) || 0)));
+            u.canReceiveStock = Boolean(document.getElementById(`rec-${userId}`)?.checked);
+            addLog(`${getActiveUser().name} (${getActiveUser().roleLabel})`, 'role', `Обновлены права ${u.name}`,
+                `Лимит скидки: ${u.maxDiscount}%, комиссия: ${u.commissionRate}%, приёмка: ${u.canReceiveStock ? 'да' : 'нет'}.`);
+            saveState();
+            renderApp();
+            showToast(`Настройки ${u.name} сохранены`, 'success');
+        }
+
+        function openRenewSubscriptionModal() {
+            if (!isOwner()) { showToast('Управление подпиской доступно только Владельцу', 'error'); return; }
+            openModal(`
+                <div class="p-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-extrabold text-slate-900">Продление подписки (65 сомони/мес)</h3>
+                        <button onclick="closeModal()" class="text-slate-400 text-xl">&times;</button>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Период продления</label>
+                            <select id="sub-months" onchange="document.getElementById('sub-total-lbl').textContent = (this.value * 65) + ' сомони'"
+                                class="w-full rounded-2xl border border-slate-300 px-3 py-2.5 text-sm font-bold bg-white">
+                                <option value="1">1 месяц — 65 сомони</option>
+                                <option value="3">3 месяца — 195 сомони</option>
+                                <option value="6">6 месяцев — 390 сомони</option>
+                                <option value="12">12 месяцев — 780 сомони</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Способ оплаты (Таджикистан)</label>
+                            <select id="sub-method" class="w-full rounded-2xl border border-slate-300 px-3 py-2.5 text-sm font-semibold bg-white">
+                                <option value="Алиф Моби">Алиф Моби</option>
+                                <option value="Душанбе Сити">Душанбе Сити (DC)</option>
+                                <option value="Корти Милли">Корти Милли</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Код транзакции / чека оплаты</label>
+                            <input id="sub-tx" type="text" placeholder="Например: ALIF-993812" value="DC-${Math.floor(100000 + Math.random() * 899999)}"
+                                class="w-full rounded-2xl border border-slate-300 px-3 py-2.5 text-sm font-mono font-bold">
+                        </div>
+                        <div class="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 flex justify-between items-center">
+                            <span class="text-xs font-bold text-brand-900">К оплате:</span>
+                            <span id="sub-total-lbl" class="text-lg font-extrabold text-brand-700">65 сомони</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button onclick="closeModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-sm font-semibold">Отмена</button>
+                        <button onclick="confirmRenewSubscription()" class="px-5 py-2 rounded-xl bg-brand-700 hover:bg-brand-800 text-white text-sm font-bold">Подтвердить оплату</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        function confirmRenewSubscription() {
+            const months = parseInt(document.getElementById('sub-months')?.value || '1', 10);
+            const method = document.getElementById('sub-method')?.value || 'Алиф Моби';
+            const txCode = (document.getElementById('sub-tx')?.value || '').trim();
+            if (!txCode) { showToast('Введите код транзакции', 'error'); return; }
+
+            const amount = months * 65;
+            const baseDate = new Date(Math.max(Date.now(), new Date(state.subscription.expiresAt).getTime()));
+            baseDate.setMonth(baseDate.getMonth() + months);
+            state.subscription.expiresAt = baseDate.toISOString().split('T')[0];
+            state.subscription.payments.unshift({
+                id: 'SUB-' + Date.now().toString().slice(-4),
+                date: new Date().toISOString(),
+                months, amount, method, txCode, status: 'Подтверждён'
+            });
+
+            addLog(`${getActiveUser().name} (Владелец)`, 'subscription', `Продлена подписка на ${months} мес. (${amount} сомони)`,
+                `Метод: ${method}, транзакция: ${txCode}. Новая дата окончания: ${fmtDate(state.subscription.expiresAt)}.`);
+            saveState();
+            closeModal();
+            renderApp();
+            showToast(`Подписка продлена до ${fmtDate(state.subscription.expiresAt)}`, 'success');
+        }
+
+        /* =========================================================================
+           17. ВКЛАДКА 8: ЖУРНАЛ ДЕЙСТВИЙ (AUDIT LOG)
+           ========================================================================= */
+        function renderAuditTab() {
+            const labels = {
+                sale: ['Продажа', 'bg-brand-100 text-brand-800'],
+                discount_req: ['Запрос скидки', 'bg-amber-100 text-amber-800'],
+                approval: ['Решение', 'bg-indigo-100 text-indigo-800'],
+                return: ['Возврат', 'bg-orange-100 text-orange-800'],
+                receive: ['Приёмка', 'bg-sky-100 text-sky-800'],
+                inventory: ['Инвентаризация', 'bg-purple-100 text-purple-800'],
+                payment: ['Оплата долга', 'bg-teal-100 text-teal-800'],
+                role: ['Роли', 'bg-slate-200 text-slate-800'],
+                subscription: ['Подписка', 'bg-emerald-100 text-emerald-800']
+            };
+            return `
+                <div class="bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden">
+                    <div class="p-5 border-b border-slate-100">
+                        <h1 class="text-lg font-extrabold text-slate-900">Журнал действий (Audit Log)</h1>
+                        <p class="text-xs text-slate-500">Полная история операций в бизнес-аккаунте «Файзи Расул»</p>
+                    </div>
+                    <div class="divide-y divide-slate-100">
+                        ${state.auditLog.map(l => {
+                            const [lbl, cls] = labels[l.type] || ['Событие', 'bg-slate-100 text-slate-700'];
+                            return `
+                                <div class="p-4 sm:px-5 flex flex-col sm:flex-row sm:items-start justify-between gap-2 hover:bg-slate-50/70">
+                                    <div class="space-y-1">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${cls}">${lbl}</span>
+                                            <span class="font-bold text-sm text-slate-900">${esc(l.title)}</span>
+                                        </div>
+                                        <div class="text-xs text-slate-600">${esc(l.details)}</div>
+                                    </div>
+                                    <div class="text-left sm:text-right shrink-0">
+                                        <div class="text-xs font-semibold text-slate-700">${esc(l.actor)}</div>
+                                        <div class="text-[11px] text-slate-400">${fmtDateTime(l.date)}</div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        /* =========================================================================
+           18. ВКЛАДКА 9: ТЕХНИЧЕСКАЯ ДОКУМЕНТАЦИЯ ANDROID / FLUTTER / SUPABASE
+           ========================================================================= */
+        const FLUTTER_CODE_SNIPPET = `// pubspec.yaml (Android-only: flutter create --platforms=android fayzi_rasul)
+// android/app/build.gradle -> minSdkVersion 26 (Android 8.0+)
+// dependencies:
+//   supabase_flutter: ^2.5.6
+//   blue_thermal_printer: ^1.2.3
+//   esc_pos_utils_plus: ^2.0.4
+//   shared_preferences: ^2.2.3
+
+import 'package:blue_thermal_printer/blue_thermal_printer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class FayziBluetoothPrinterService {
+  final BlueThermalPrinter _bt = BlueThermalPrinter.instance;
+  static const _savedMacKey = 'fayzi_bt_printer_mac';
+
+  /// Однократное сопряжение и сохранение MAC-адреса принтера
+  Future<bool> connectAndSave(BluetoothDevice device) async {
+    await _bt.connect(device);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_savedMacKey, device.address ?? '');
+    return (await _bt.isConnected) ?? false;
+  }
+
+  /// Автоподключение к сохранённому принтеру без повторного выбора
+  Future<bool> ensureConnected() async {
+    if ((await _bt.isConnected) == true) return true;
+    final prefs = await SharedPreferences.getInstance();
+    final mac = prefs.getString(_savedMacKey);
+    if (mac == null || mac.isEmpty) return false;
+    final bonded = await _bt.getBondedDevices();
+    final target = bonded.where((d) => d.address == mac).firstOrNull;
+    if (target == null) return false;
+    await _bt.connect(target);
+    return (await _bt.isConnected) ?? false;
+  }
+
+  /// Мгновенная печать чека ESC/POS (58мм / 80мм)
+  Future<void> printSaleReceipt(Map<String, dynamic> sale, {int paperMm = 58}) async {
+    if (!await ensureConnected()) {
+      throw Exception('Принтер не подключён. Проверьте питание Bluetooth.');
+    }
+    _bt.printCustom('ООО ФАЙЗИ РАСУЛ — ОПТ', 2, 1);
+    _bt.printCustom('ФАЙЗИ РАСУЛ', 1, 1);
+    _bt.printLeftRight('Чек №:', sale['invoice_no'], 1);
+    _bt.printLeftRight('Сотрудник:', sale['employee_name'], 1);
+    _bt.printLeftRight('Покупатель:', sale['buyer_name'], 1);
+    _bt.printLeftRight('Магазин:', sale['shop_name'], 1);
+    _bt.printCustom('--------------------------------', 1, 1);
+    for (final item in sale['items']) {
+      _bt.printCustom(item['name'], 1, 0);
+      _bt.printLeftRight('\${item['qty']} \${item['unit']} x \${item['price']}', '\${item['total']} с.', 1);
+    }
+    _bt.printCustom('--------------------------------', 1, 1);
+    _bt.printLeftRight('ОБЩАЯ СКИДКА:', '\${sale['discount_percent']}%', 1);
+    _bt.printLeftRight('ИТОГО К ОПЛАТЕ:', '\${sale['final_payable']} с.', 2);
+    _bt.printLeftRight('Оплачено:', '\${sale['paid_amount']} с.', 1);
+    _bt.printLeftRight('Долг:', '\${sale['debt']} с.', 1);
+    _bt.printNewLine();
+    _bt.paperCut();
+  }
+}`;
+
+        const SUPABASE_SQL_SNIPPET = `-- 1. РОЛИ И ПРОФИЛИ (Владелец, Администратор с подтверждением, Сотрудник)
+CREATE TYPE user_role AS ENUM ('owner', 'admin', 'employee');
+
+CREATE TABLE business_accounts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL DEFAULT 'Файзи Расул',
+  subscription_price_tjs NUMERIC(10,2) NOT NULL DEFAULT 65.00,
+  subscription_expires_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  business_id UUID NOT NULL REFERENCES business_accounts(id),
+  full_name TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  role user_role NOT NULL DEFAULT 'employee',
+  admin_approved BOOLEAN NOT NULL DEFAULT FALSE,
+  max_discount_pct NUMERIC(5,2) NOT NULL DEFAULT 3.00,
+  commission_rate_pct NUMERIC(5,2) NOT NULL DEFAULT 4.00,
+  can_receive_stock BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+-- 2. ПРОДАЖИ С ЗАЩИТОЙ ОТ ДУБЛЕЙ (idempotency_key)
+CREATE TABLE sales (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  business_id UUID NOT NULL REFERENCES business_accounts(id),
+  invoice_no TEXT NOT NULL UNIQUE,
+  idempotency_key TEXT NOT NULL UNIQUE,
+  employee_id UUID NOT NULL REFERENCES profiles(id),
+  shop_id UUID NOT NULL,
+  gross_total NUMERIC(12,2) NOT NULL,
+  discount_percent NUMERIC(5,2) NOT NULL DEFAULT 0 CHECK (discount_percent >= 0 AND discount_percent <= 100),
+  discount_amount NUMERIC(12,2) NOT NULL,
+  final_payable NUMERIC(12,2) NOT NULL,
+  paid_amount NUMERIC(12,2) NOT NULL DEFAULT 0,
+  debt_amount NUMERIC(12,2) NOT NULL,
+  commission_amount NUMERIC(12,2) NOT NULL DEFAULT 0,
+  status TEXT NOT NULL CHECK (status IN ('confirmed','pending_approval','rejected')),
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 3. СЕРВЕРНАЯ ПРОВЕРКА ПОДПИСКИ И НАЧИСЛЕНИЯ КОМИССИИ
+CREATE OR REPLACE FUNCTION check_subscription_and_calc_commission()
+RETURNS TRIGGER AS $$
+DECLARE
+  sub_exp TIMESTAMPTZ;
+  emp_rate NUMERIC(5,2);
+BEGIN
+  SELECT subscription_expires_at INTO sub_exp FROM business_accounts WHERE id = NEW.business_id;
+  IF sub_exp < now() THEN
+    RAISE EXCEPTION 'Подписка бизнес-аккаунта (65 сомони/мес) истекла';
+  END IF;
+  SELECT commission_rate_pct INTO emp_rate FROM profiles WHERE id = NEW.employee_id;
+  -- Комиссия строго от фактически полученных денег!
+  NEW.commission_amount := ROUND(LEAST(NEW.paid_amount, NEW.final_payable) * emp_rate / 100.0, 2);
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER trg_sales_guard BEFORE INSERT OR UPDATE ON sales
+FOR EACH ROW EXECUTE FUNCTION check_subscription_and_calc_commission();
+
+-- 4. RLS ПОЛИТИКА: ТОЛЬКО ВЛАДЕЛЕЦ ПОДТВЕРЖДАЕТ АДМИНИСТРАТОРОВ
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Owner manages admins" ON profiles FOR UPDATE
+USING (EXISTS (SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'owner' AND p.business_id = profiles.business_id));`;
+
+        function renderAndroidDocsTab() {
+            const subBtn = (id, title) => `
+                <button onclick="androidDocSubtab='${id}'; renderApp()"
+                    class="px-4 py-2 rounded-2xl text-xs font-bold transition-colors ${androidDocSubtab === id ? 'bg-brand-700 text-white' : 'bg-white border border-slate-200 text-slate-600'}">
+                    ${title}
+                </button>
+            `;
+
+            let body = '';
+            if (androidDocSubtab === 'flutter') {
+                body = `
+                    <div class="bg-white rounded-3xl border border-slate-200 p-5 space-y-3">
+                        <div class="flex items-center justify-between gap-2">
+                            <div>
+                                <h2 class="text-base font-extrabold text-slate-900">Flutter Android-Only & Bluetooth ESC/POS</h2>
+                                <p class="text-xs text-slate-500">Целевая платформа: Android 8.0+ (minSdkVersion 26). Без iOS-папки и зависимостей.</p>
+                            </div>
+                            <button onclick="copyTextToClipboard(FLUTTER_CODE_SNIPPET, 'Dart-код')" class="px-3.5 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold">Копировать код</button>
+                        </div>
+                        <pre class="p-4 rounded-2xl bg-slate-900 text-emerald-300 font-mono text-xs overflow-x-auto leading-relaxed">${esc(FLUTTER_CODE_SNIPPET)}</pre>
+                    </div>
+                `;
+            } else if (androidDocSubtab === 'sql') {
+                body = `
+                    <div class="bg-white rounded-3xl border border-slate-200 p-5 space-y-3">
+                        <div class="flex items-center justify-between gap-2">
+                            <div>
+                                <h2 class="text-base font-extrabold text-slate-900">SQL-миграции Supabase / PostgreSQL</h2>
+                                <p class="text-xs text-slate-500">Роли, RLS-политики, серверная проверка подписки (65 сомони/мес), idempotency_key и триггер комиссий.</p>
+                            </div>
+                            <button onclick="copyTextToClipboard(SUPABASE_SQL_SNIPPET, 'SQL-миграции')" class="px-3.5 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold">Копировать SQL</button>
+                        </div>
+                        <pre class="p-4 rounded-2xl bg-slate-900 text-sky-300 font-mono text-xs overflow-x-auto leading-relaxed">${esc(SUPABASE_SQL_SNIPPET)}</pre>
+                    </div>
+                `;
+            } else {
+                body = `
+                    <div class="bg-white rounded-3xl border border-slate-200 p-5 space-y-4 text-sm text-slate-700">
+                        <h2 class="text-base font-extrabold text-slate-900">Пошаговая сборка APK и установка на Android</h2>
+                        <ol class="list-decimal list-inside space-y-2.5 text-xs sm:text-sm">
+                            <li><strong>Создание Android-проекта без iOS:</strong><br><code class="px-2 py-1 rounded bg-slate-100 font-mono text-xs">flutter create --platforms=android --org tj.fayzirasul fayzi_rasul</code></li>
+                            <li><strong>Настройка AndroidManifest.xml:</strong> добавить разрешения <code class="font-mono text-xs">BLUETOOTH_CONNECT</code>, <code class="font-mono text-xs">BLUETOOTH_SCAN</code>, <code class="font-mono text-xs">INTERNET</code> и указать <code class="font-mono text-xs">minSdkVersion 26</code> в <code class="font-mono text-xs">android/app/build.gradle</code>.</li>
+                            <li><strong>Подключение Supabase:</strong> выполнить SQL-миграции в Supabase SQL Editor, включить Realtime для таблиц <code class="font-mono text-xs">sales</code> и <code class="font-mono text-xs">warehouse_batches</code>, вставить <code class="font-mono text-xs">SUPABASE_URL</code> и <code class="font-mono text-xs">ANON_KEY</code>.</li>
+                            <li><strong>Сборка установочного APK:</strong><br><code class="px-2 py-1 rounded bg-slate-100 font-mono text-xs">flutter build apk --release --split-per-abi</code><br>Готовый файл: <code class="font-mono text-xs">build/app/outputs/flutter-apk/app-arm64-v8a-release.apk</code>.</li>
+                            <li><strong>Установка на Android-телефоны сотрудников и владельца:</strong> передать APK через Telegram/WhatsApp или USB → открыть файл на телефоне → разрешить «Установка из неизвестных источников» → нажать «Установить» → выполнить однократное сопряжение с Bluetooth-принтером.</li>
+                        </ol>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="space-y-4">
+                    <div>
+                        <h1 class="text-xl font-extrabold text-slate-900">Android / Flutter / Supabase — Техническая база</h1>
+                        <p class="text-xs text-slate-500">Готовые исходники и инструкции для развёртывания нативного Android-приложения «Файзи Расул»</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        ${subBtn('flutter', '1. Flutter + Bluetooth ESC/POS')}
+                        ${subBtn('sql', '2. Supabase SQL & RLS')}
+                        ${subBtn('guide', '3. Сборка и установка APK')}
+                    </div>
+                    ${body}
+                </div>
+            `;
+        }
+
+        /* =========================================================================
+           19. ИНИЦИАЛИЗАЦИЯ
+           ========================================================================= */
+        window.addEventListener('DOMContentLoaded', () => {
+            renderApp();
+        });
+    </script>
+</body>
+</html>
