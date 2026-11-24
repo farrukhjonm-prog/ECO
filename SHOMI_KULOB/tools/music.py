@@ -206,6 +206,11 @@ def render_music(path, duration, cuts, end_start, seed=1, style="dark_luxury",
     ramp = np.linspace(1, 0, fo) ** 1.5
     L[-fo:] *= ramp
     R[-fo:] *= ramp
+    # Remove near-Nyquist energy (from noise/hats) that causes inter-sample
+    # true-peak overs after AAC encoding: two passes of a [1,2,1]/4 FIR.
+    for _ in range(2):
+        L = np.convolve(L, [0.25, 0.5, 0.25], mode="same")
+        R = np.convolve(R, [0.25, 0.5, 0.25], mode="same")
     st = np.stack([L, R], axis=1)
     st = np.tanh(st * 1.4) / 1.4
     st /= max(1e-9, np.abs(st).max()) / 0.89

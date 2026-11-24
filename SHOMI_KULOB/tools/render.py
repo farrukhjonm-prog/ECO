@@ -20,6 +20,7 @@ import numpy as np
 from PIL import Image
 
 import gfx
+import photo
 
 FPS = 30
 _STATE = {}
@@ -63,14 +64,21 @@ def build_elements(variant, s):
             lh = size * 1.22
             n = len(sc["lines"])
             y0 = sc.get("cy", 900) - lh * (n - 1) / 2
+            line_els = []
             for i, runs in enumerate(sc["lines"]):
                 txt = " ".join(r[0] for r in runs)
                 big = runs[0][2] if len(runs[0]) > 2 else size
                 f = _fit(txt, "Montserrat", big, 800, maxw, s)
                 img = gfx.rich_line([(r[0], f, COLORS[r[1]]) for r in runs], s,
                                     gap=f.size / s * 0.28)
-                els.append(dict(img=img, cx=540, cy=y0 + i * lh, t0=t0 + 0.12 + 0.13 * i,
-                                t1=t1 - 0.35, anim="rise", din=0.6))
+                line_els.append(dict(img=img, cx=540, cy=y0 + i * lh, t0=t0 + 0.12 + 0.13 * i,
+                                     t1=t1 - 0.35, anim="rise", din=0.6))
+            if sc.get("panel"):
+                pw = max(e["img"].width for e in line_els) / s - 40
+                ph = lh * n + 40
+                els.append(dict(img=gfx.panel(pw, ph, s), cx=540, cy=sc.get("cy", 900),
+                                t0=t0, t1=t1 - 0.35, anim="fade", din=0.4))
+            els += line_els
         elif kind == "brandbug":
             bug = gfx.text_layer("ШОМИ КУЛОБ", gfx.font("Montserrat", 34 * s, 800), "gold",
                                  s, tracking=10)
@@ -158,7 +166,9 @@ def _init(W, H, variant, seed):
     frame.putalpha(fr)
     _STATE.update(W=W, H=H, s=s, base=base, vig=vig, smoke=smoke, xx=xx, yy=yy,
                   grain=grain, parts=parts, cuts=cuts, els=els, rng=rng, frame=frame,
-                  dur=variant["duration"])
+                  dur=variant["duration"],
+                  photos=photo.PhotoTrack(variant, W, H)
+                  if any("photo" in sc for sc in variant["scenes"]) else None)
 
 
 def _background(t):
@@ -179,15 +189,24 @@ def _background(t):
     sm = st["smoke"][off:off + lh] * (0.35 + 0.65 * yy)
     img += np.array([90, 60, 45], np.float32) * (0.22 * sm)[..., None]
     img *= st["vig"]
+    W, H = st["W"], st["H"]
+    ph = st.get("photos")
+    if ph is not None and ph.active(t):
+        out = ph.frame(t)
+        gain = ph.ember_gain(t)
+    else:
+        bg = Image.fromarray(np.clip(img, 0, 255).astype(np.uint8)).resize((W, H), Image.BICUBIC)
+        out = np.asarray(bg, np.float32).copy()
+        gain = 1.0
     for c in st["cuts"]:
         d = t - c
         if -0.22 < d < 0.22:
             band = np.exp(-(((xx + yy * 0.55) - (0.2 + (d + 0.22) / 0.44 * 1.6)) / 0.09) ** 2)
-            img += np.array([255, 190, 110], np.float32) * (0.55 * band * (1 - abs(d) / 0.22))[..., None]
-    W, H = st["W"], st["H"]
-    bg = Image.fromarray(np.clip(img, 0, 255).astype(np.uint8)).resize((W, H), Image.BICUBIC)
-    out = np.asarray(bg, np.float32)
-    out += _embers(t)
+            sk = np.clip(band * (1 - abs(d) / 0.22) * 0.55 * 255, 0, 255).astype(np.uint8)
+            sk = np.asarray(Image.fromarray(sk).resize((W, H), Image.BICUBIC), np.float32) / 255
+            out += np.array([255, 190, 110], np.float32) * sk[..., None]
+    if gain > 0:
+        out += _embers(t) * gain
     fr = np.random.default_rng(int(round(t * FPS)) + 7)
     gy, gx = int(fr.integers(0, 64)), int(fr.integers(0, 64))
     out += st["grain"][gy:gy + H, gx:gx + W][..., None]

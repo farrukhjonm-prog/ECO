@@ -263,3 +263,15 @@ def with_alpha(img, a):
     out = img.copy()
     out.putalpha(img.getchannel("A").point(lambda v: int(v * a)))
     return out
+
+
+def panel(w, h, s, alpha=150):
+    """Soft dark 'glass' card placed behind text over busy photos."""
+    m = int(40 * s)
+    W, H = int(w * s) + 2 * m, int(h * s) + 2 * m
+    mask = Image.new("L", (W, H), 0)
+    ImageDraw.Draw(mask).rounded_rectangle((m, m, W - m, H - m), int(34 * s), fill=alpha)
+    mask = mask.filter(ImageFilter.GaussianBlur(16 * s))
+    img = Image.new("RGBA", (W, H), (12, 5, 4, 0))
+    img.putalpha(mask)
+    return img

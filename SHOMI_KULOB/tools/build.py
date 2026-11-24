@@ -70,7 +70,8 @@ def build(project_path, preview=False):
     inv = scan()
     (pdir / "source_inventory.json").write_text(json.dumps(inv, ensure_ascii=False, indent=2),
                                                 encoding="utf-8")
-    W, H = (1080, 1920) if preview else (2160, 3840)
+    W, H = (1080, 1920) if preview else tuple(proj.get("master", [2160, 3840]))
+    tag = "4K" if H >= 3840 else f"{H}p"
     report = [f"# QC report — {day} {name}", ""]
     for vname, var in proj["variants"].items():
         with tempfile.TemporaryDirectory() as td:
@@ -88,12 +89,16 @@ def build(project_path, preview=False):
             sh("ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", str(lst), "-c", "copy", str(vid))
             out_dir = ROOT / OUT[vname]
             base = f"{day}_{name}_{vname}"
-            master = out_dir / f"{base}_MASTER_4K.mp4" if not preview else td / "m.mp4"
+            master = out_dir / f"{base}_MASTER_{tag}.mp4" if not preview else td / "m.mp4"
             insta = out_dir / f"{base}.mp4" if not preview else pdir / f"PREVIEW_{base}.mp4"
-            af = "loudnorm=I=-14:TP=-1.5:LRA=9,aresample=48000"
+            af = ("loudnorm=I=-14:TP=-2:LRA=9,aresample=48000,"
+                  "alimiter=limit=0.72:attack=2:release=60:level=false")
             if not preview:
                 sh("ffmpeg", "-y", "-i", str(vid), "-i", str(wav), "-map", "0:v", "-map", "1:a",
-                   "-c:v", "copy", "-af", af, "-c:a", "aac", "-b:a", "320k", "-shortest",
+                   "-c:v", "libx264", "-preset", "slow", "-crf", "16", "-maxrate", "24M",
+                   "-bufsize", "48M", "-profile:v", "high", "-pix_fmt", "yuv420p",
+                   "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709",
+                   "-af", af, "-c:a", "aac", "-b:a", "320k", "-shortest",
                    "-movflags", "+faststart", str(master))
             sh("ffmpeg", "-y", "-i", str(vid), "-i", str(wav), "-map", "0:v", "-map", "1:a",
                "-vf", "scale=1080:1920:flags=lanczos", "-c:v", "libx264", "-preset", "slow",
