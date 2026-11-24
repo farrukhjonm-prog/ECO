@@ -282,6 +282,11 @@ def _place(frame, el, t):
         a = min(1.0, p * 2)
         sc = (0.86 + 0.14 * e) * (1 + el.get("push", 0) * max(0.0, t - t0))
         dx_slide = (1 - e) * 620 * s
+    elif anim == "hero":
+        e = gfx.ease_in_out_sine(p)
+        a = min(1.0, (t - t0) / 0.3)
+        sc = el["zoom0"] + (1 - el["zoom0"]) * e
+        sc *= 1 + el.get("push", 0) * max(0.0, t - t0 - din)
     elif anim == "steam":
         a = gfx.ease_in_out_sine(p) * 0.9
         hh = el["h"]

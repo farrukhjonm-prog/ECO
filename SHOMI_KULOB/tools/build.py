@@ -8,6 +8,7 @@ SRT subtitles + caption -> QC (ffprobe, loudness, contact sheet).
 Source folders 01..05 are only ever read, never modified.
 """
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -77,6 +78,16 @@ def build(project_path, preview=False):
     tag = "4K" if H >= 3840 else f"{H}p"
     report = [f"# QC report — {day} {name}", ""]
     for vname, var in proj["variants"].items():
+        if var.get("same_as"):
+            # Identical cut (layout is safe for both Reels and Stories): copy files.
+            src = proj["variants"][var["same_as"]]
+            for suf in ("", f"_MASTER_{tag}"):
+                a = ROOT / OUT[var["same_as"]] / f"{day}_{name}_{var['same_as']}{suf}.mp4"
+                if a.exists():
+                    shutil.copyfile(a, ROOT / OUT[vname] / f"{day}_{name}_{vname}{suf}.mp4")
+            (ROOT / OUT[vname] / f"{day}_{name}_{vname}.srt").write_text(srt(src), encoding="utf-8")
+            report.append(f"## {vname}: identical copy of {var['same_as']}\n")
+            continue
         with tempfile.TemporaryDirectory() as td:
             td = Path(td)
             cuts = [sc["start"] for sc in var["scenes"]

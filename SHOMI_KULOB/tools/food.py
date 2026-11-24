@@ -92,8 +92,14 @@ def dish(els, sc, s):
     tex = steam_texture(int(600 * s), int(420 * s), s, seed=int(t0 * 10))
     els.append(dict(img=tex, cx=540, cy=c.get("steam_cy", 700), t0=t0 + 0.4, t1=t1 - 0.3,
                     anim="steam", din=0.8, h=int(420 * s)))
-    els.append(dict(img=img, cx=540, cy=c.get("cy", 930), t0=t0, t1=t1 - 0.3, anim="slide",
-                    din=0.55, push=0.018))
+    hero = sc.get("hero", 0)
+    if hero:
+        # Close-up first (food fills frame), then pull back to the full plate.
+        els.append(dict(img=img, cx=540, cy=c.get("cy", 930), t0=t0, t1=t1 - 0.3, anim="hero",
+                        din=hero, zoom0=sc.get("zoom0", 1.35), push=0.012))
+    else:
+        els.append(dict(img=img, cx=540, cy=c.get("cy", 930), t0=t0, t1=t1 - 0.3,
+                        anim="slide", din=0.55, push=0.018))
     if sc.get("index"):
         idx = gfx.pill(sc["index"], gfx.font("Oswald", 40 * s, 700), s, padx=26, pady=8)
         els.append(dict(img=idx, cx=540, cy=325, t0=t0 + 0.05, t1=t1 - 0.3, anim="pop", din=0.4))
@@ -109,7 +115,7 @@ def dish(els, sc, s):
                         t0=t0 + 0.15 + 0.1 * i, t1=t1 - 0.3, anim="rise", din=0.5))
     p = sc["price"]
     badge = price_badge(p["portion"], p["amount"], p["currency"], s)
-    els.append(dict(img=badge, cx=p.get("cx", 810), cy=p.get("cy", 1190), t0=t0 + 0.4,
+    els.append(dict(img=badge, cx=p.get("cx", 810), cy=p.get("cy", 1190), t0=t0 + hero + 0.4,
                     t1=t1 - 0.3, anim="pop", din=0.5))
 
 

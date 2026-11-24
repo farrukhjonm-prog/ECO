@@ -1,0 +1,437 @@
+{
+  "date": "2026-11-24",
+  "name": "Goryachie-Zakuski-30s",
+  "concept": "Dark BBQ fast-food promo for the 'ГОРЯЧИЕ ЗАКУСКИ' menu: official logo intro, Tajik hook, four dish cards cut out from the official menu with rising steam, beat-synced slide-ins and price badges, official-logo contact end screen. Dish names, portions and prices copied verbatim from 04_MENU/menu_goryachie_zakuski_01.jpg. 30+ s version: each dish gets its own 5 s segment (close-up hero shot with name, pull back to full plate, then price badge).",
+  "source_check": {
+    "menu": "04_MENU/menu_goryachie_zakuski_01.jpg",
+    "items": [
+      [
+        "КУРИНЫЙ КРЫЛЫШКИ",
+        "1 пор.",
+        "23 СОМОНИ"
+      ],
+      [
+        "НАГГЕТСИ",
+        "1 пор.",
+        "23 СОМОНИ"
+      ],
+      [
+        "КАРТОШКА ФРИ",
+        "1 пор.",
+        "12 СОМОНИ"
+      ],
+      [
+        "КАРТОШКА ПО-ДЕРЕВЕНСКИ",
+        "1 пор.",
+        "10 СОМОНИ"
+      ]
+    ]
+  },
+  "style": "bright_pop",
+  "bpm": 120,
+  "seed": 3012,
+  "master": [
+    1080,
+    1920
+  ],
+  "caption": "🔥 Гурусна шудед? Хӯрокҳои дӯстдоштаи шумо дар Шоми Кӯлоб!\n\n1. КУРИНЫЙ КРЫЛЫШКИ — 1 пор. 23 сомони\n2. НАГГЕТСИ — 1 пор. 23 сомони\n3. КАРТОШКА ФРИ — 1 пор. 12 сомони\n4. КАРТОШКА ПО-ДЕРЕВЕНСКИ — 1 пор. 10 сомони\n\n📞 Ҳамин ҳоло фармоиш диҳед: +992 934 41 41 41\n📍 Instagram: @shomi_kulob_restourant\n\n#ШомиКулоб #shomi_kulob_restourant #Кулоб #Kulob #Тоҷикистон #Tajikistan #фастфуд #fastfood #крылышки #наггетсы #картошкафри #food #reels",
+  "variants": {
+    "Reels": {
+      "duration": 32,
+      "scenes": [
+        {
+          "type": "logo_intro",
+          "start": 0,
+          "end": 2.5,
+          "logo": "03_LOGO/logo_shomi_kulob_official.png"
+        },
+        {
+          "type": "lines",
+          "start": 2.5,
+          "end": 6,
+          "lines": [
+            [
+              [
+                "Гурусна",
+                "w"
+              ],
+              [
+                "шудед?",
+                "w"
+              ]
+            ],
+            [
+              [
+                "Хӯрокҳои",
+                "gold",
+                108
+              ]
+            ],
+            [
+              [
+                "дӯстдоштаи шумо",
+                "w"
+              ]
+            ],
+            [
+              [
+                "дар Шоми Кӯлоб!",
+                "gold"
+              ]
+            ]
+          ]
+        },
+        {
+          "type": "strip",
+          "start": 6,
+          "end": 26
+        },
+        {
+          "type": "dish",
+          "start": 6,
+          "end": 11,
+          "index": "1",
+          "name": [
+            "КУРИНЫЙ",
+            "КРЫЛЫШКИ"
+          ],
+          "price": {
+            "portion": "1 пор.",
+            "amount": "23",
+            "currency": "СОМОНИ"
+          },
+          "cut": {
+            "src": "04_MENU/menu_goryachie_zakuski_01.jpg",
+            "box": [
+              560,
+              350,
+              960,
+              585
+            ],
+            "ellipse": [
+              0.56,
+              0.55,
+              0.5,
+              0.47
+            ],
+            "w": 1000,
+            "cy": 930,
+            "steam_cy": 650
+          },
+          "hero": 2.2,
+          "zoom0": 1.35
+        },
+        {
+          "type": "dish",
+          "start": 11,
+          "end": 16,
+          "index": "2",
+          "name": [
+            "НАГГЕТСИ"
+          ],
+          "price": {
+            "portion": "1 пор.",
+            "amount": "23",
+            "currency": "СОМОНИ"
+          },
+          "cut": {
+            "src": "04_MENU/menu_goryachie_zakuski_01.jpg",
+            "box": [
+              555,
+              585,
+              960,
+              785
+            ],
+            "ellipse": [
+              0.55,
+              0.56,
+              0.48,
+              0.44
+            ],
+            "w": 1000,
+            "cy": 930,
+            "steam_cy": 650
+          },
+          "hero": 2.2,
+          "zoom0": 1.35
+        },
+        {
+          "type": "dish",
+          "start": 16,
+          "end": 21,
+          "index": "3",
+          "name": [
+            "КАРТОШКА ФРИ"
+          ],
+          "price": {
+            "portion": "1 пор.",
+            "amount": "12",
+            "currency": "СОМОНИ"
+          },
+          "cut": {
+            "src": "04_MENU/menu_goryachie_zakuski_01.jpg",
+            "box": [
+              510,
+              770,
+              960,
+              990
+            ],
+            "ellipse": [
+              0.5,
+              0.47,
+              0.52,
+              0.42
+            ],
+            "w": 1000,
+            "cy": 930,
+            "steam_cy": 650
+          },
+          "hero": 2.2,
+          "zoom0": 1.35
+        },
+        {
+          "type": "dish",
+          "start": 21,
+          "end": 26,
+          "index": "4",
+          "name": [
+            "КАРТОШКА",
+            "ПО-ДЕРЕВЕНСКИ"
+          ],
+          "price": {
+            "portion": "1 пор.",
+            "amount": "10",
+            "currency": "СОМОНИ"
+          },
+          "cut": {
+            "src": "04_MENU/menu_goryachie_zakuski_01.jpg",
+            "box": [
+              540,
+              975,
+              960,
+              1190
+            ],
+            "ellipse": [
+              0.55,
+              0.56,
+              0.5,
+              0.44
+            ],
+            "w": 1000,
+            "cy": 930,
+            "steam_cy": 650
+          },
+          "hero": 2.2,
+          "zoom0": 1.35
+        },
+        {
+          "type": "end",
+          "start": 26,
+          "end": 32,
+          "logo": "03_LOGO/logo_shomi_kulob_official.png",
+          "logo_w": 380,
+          "logo_cy": 440
+        }
+      ]
+    },
+    "Story": {
+      "duration": 32,
+      "same_as": "Reels",
+      "scenes": [
+        {
+          "type": "logo_intro",
+          "start": 0,
+          "end": 2.5,
+          "logo": "03_LOGO/logo_shomi_kulob_official.png"
+        },
+        {
+          "type": "lines",
+          "start": 2.5,
+          "end": 6,
+          "lines": [
+            [
+              [
+                "Гурусна",
+                "w"
+              ],
+              [
+                "шудед?",
+                "w"
+              ]
+            ],
+            [
+              [
+                "Хӯрокҳои",
+                "gold",
+                108
+              ]
+            ],
+            [
+              [
+                "дӯстдоштаи шумо",
+                "w"
+              ]
+            ],
+            [
+              [
+                "дар Шоми Кӯлоб!",
+                "gold"
+              ]
+            ]
+          ]
+        },
+        {
+          "type": "strip",
+          "start": 6,
+          "end": 26
+        },
+        {
+          "type": "dish",
+          "start": 6,
+          "end": 11,
+          "index": "1",
+          "name": [
+            "КУРИНЫЙ",
+            "КРЫЛЫШКИ"
+          ],
+          "price": {
+            "portion": "1 пор.",
+            "amount": "23",
+            "currency": "СОМОНИ"
+          },
+          "cut": {
+            "src": "04_MENU/menu_goryachie_zakuski_01.jpg",
+            "box": [
+              560,
+              350,
+              960,
+              585
+            ],
+            "ellipse": [
+              0.56,
+              0.55,
+              0.5,
+              0.47
+            ],
+            "w": 1000,
+            "cy": 930,
+            "steam_cy": 650
+          },
+          "hero": 2.2,
+          "zoom0": 1.35
+        },
+        {
+          "type": "dish",
+          "start": 11,
+          "end": 16,
+          "index": "2",
+          "name": [
+            "НАГГЕТСИ"
+          ],
+          "price": {
+            "portion": "1 пор.",
+            "amount": "23",
+            "currency": "СОМОНИ"
+          },
+          "cut": {
+            "src": "04_MENU/menu_goryachie_zakuski_01.jpg",
+            "box": [
+              555,
+              585,
+              960,
+              785
+            ],
+            "ellipse": [
+              0.55,
+              0.56,
+              0.48,
+              0.44
+            ],
+            "w": 1000,
+            "cy": 930,
+            "steam_cy": 650
+          },
+          "hero": 2.2,
+          "zoom0": 1.35
+        },
+        {
+          "type": "dish",
+          "start": 16,
+          "end": 21,
+          "index": "3",
+          "name": [
+            "КАРТОШКА ФРИ"
+          ],
+          "price": {
+            "portion": "1 пор.",
+            "amount": "12",
+            "currency": "СОМОНИ"
+          },
+          "cut": {
+            "src": "04_MENU/menu_goryachie_zakuski_01.jpg",
+            "box": [
+              510,
+              770,
+              960,
+              990
+            ],
+            "ellipse": [
+              0.5,
+              0.47,
+              0.52,
+              0.42
+            ],
+            "w": 1000,
+            "cy": 930,
+            "steam_cy": 650
+          },
+          "hero": 2.2,
+          "zoom0": 1.35
+        },
+        {
+          "type": "dish",
+          "start": 21,
+          "end": 26,
+          "index": "4",
+          "name": [
+            "КАРТОШКА",
+            "ПО-ДЕРЕВЕНСКИ"
+          ],
+          "price": {
+            "portion": "1 пор.",
+            "amount": "10",
+            "currency": "СОМОНИ"
+          },
+          "cut": {
+            "src": "04_MENU/menu_goryachie_zakuski_01.jpg",
+            "box": [
+              540,
+              975,
+              960,
+              1190
+            ],
+            "ellipse": [
+              0.55,
+              0.56,
+              0.5,
+              0.44
+            ],
+            "w": 1000,
+            "cy": 930,
+            "steam_cy": 650
+          },
+          "hero": 2.2,
+          "zoom0": 1.35
+        },
+        {
+          "type": "end",
+          "start": 26,
+          "end": 32,
+          "logo": "03_LOGO/logo_shomi_kulob_official.png",
+          "logo_w": 380,
+          "logo_cy": 440
+        }
+      ]
+    }
+  }
+}
