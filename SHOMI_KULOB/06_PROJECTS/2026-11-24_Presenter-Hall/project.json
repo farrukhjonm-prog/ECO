@@ -1,0 +1,425 @@
+{
+  "date": "2026-11-24",
+  "name": "Presenter-Hall",
+  "concept": "Warm cinematic invitation: the presenter (supplied photo) welcomes viewers, intercut with real footage stills of the ШОМИ КУЛОБ hall and open kitchen; slow camera moves, zoom-punch dissolves on the beat, ember sparks, gold kinetic typography, fixed contact end screen over the blurred hall. No dish names or prices are shown: the menu screens in the photos are not legible enough to verify.",
+  "style": "warm_groove",
+  "bpm": 120,
+  "seed": 2411,
+  "master": [
+    1080,
+    1920
+  ],
+  "caption": "ШОМИ КУЛОБ ✨\n\nМехоҳед таоми болаззатро бичашед? Пас ба ШОМИ КУЛОБ хуш омадед!\nТаъми беҳамто ва сифати баланд — дар толори зебо ва бароҳат.\n\n📞 Ҳамин ҳоло фармоиш диҳед: +992 934 41 41 41\n📍 Instagram: @shomi_kulob_restourant\n\n#ШомиКулоб #shomi_kulob_restourant #Кулоб #Kulob #Тоҷикистон #Tajikistan #тарабхона #ресторан #таом #food #restaurant #foodie #reels",
+  "variants": {
+    "Reels": {
+      "duration": 20,
+      "scenes": [
+        {
+          "type": "intro",
+          "start": 0,
+          "end": 3.5,
+          "photo": "01_SOURCE_PHOTOS/hall_vertical_01.webp",
+          "kb": [
+            [
+              0.33,
+              0.56,
+              1.0
+            ],
+            [
+              0.35,
+              0.53,
+              1.12
+            ]
+          ],
+          "grade": "warm",
+          "shade": [
+            0.4,
+            0.5,
+            0.5
+          ],
+          "embers": 0.6
+        },
+        {
+          "type": "lines",
+          "start": 3.5,
+          "end": 7,
+          "cy": 560,
+          "photo": "01_SOURCE_PHOTOS/presenter_girl_01.jpg",
+          "kb": [
+            [
+              0.52,
+              0.52,
+              1.0
+            ],
+            [
+              0.56,
+              0.53,
+              1.1
+            ]
+          ],
+          "grade": "skin",
+          "shade": [
+            0.75,
+            0.35,
+            1.0
+          ],
+          "embers": 0.25,
+          "lines": [
+            [
+              [
+                "Мехоҳед",
+                "w"
+              ],
+              [
+                "таоми",
+                "w"
+              ]
+            ],
+            [
+              [
+                "болаззатро",
+                "gold",
+                112
+              ]
+            ],
+            [
+              [
+                "бичашед?",
+                "w"
+              ]
+            ]
+          ],
+          "panel": true
+        },
+        {
+          "type": "lines",
+          "start": 7,
+          "end": 10.5,
+          "cy": 1290,
+          "photo": "01_SOURCE_PHOTOS/hall_wide_01.webp",
+          "kb": [
+            [
+              0.3,
+              0.52,
+              1.0
+            ],
+            [
+              0.6,
+              0.5,
+              1.06
+            ]
+          ],
+          "grade": "warm",
+          "shade": [
+            0.35,
+            0.8,
+            0.95
+          ],
+          "embers": 0.35,
+          "lines": [
+            [
+              [
+                "Пас ба",
+                "w"
+              ]
+            ],
+            [
+              [
+                "ШОМИ КУЛОБ",
+                "gold",
+                110
+              ]
+            ],
+            [
+              [
+                "хуш омадед!",
+                "w"
+              ]
+            ]
+          ],
+          "panel": true
+        },
+        {
+          "type": "lines",
+          "start": 10.5,
+          "end": 14,
+          "cy": 560,
+          "photo": "01_SOURCE_PHOTOS/presenter_girl_01.jpg",
+          "kb": [
+            [
+              0.58,
+              0.52,
+              1.18
+            ],
+            [
+              0.54,
+              0.52,
+              1.03
+            ]
+          ],
+          "grade": "skin",
+          "shade": [
+            0.75,
+            0.35,
+            1.0
+          ],
+          "embers": 0.25,
+          "lines": [
+            [
+              [
+                "Таъми",
+                "w"
+              ],
+              [
+                "беҳамто",
+                "gold"
+              ]
+            ],
+            [
+              [
+                "ва сифати",
+                "w"
+              ],
+              [
+                "баланд!",
+                "gold"
+              ]
+            ]
+          ],
+          "panel": true
+        },
+        {
+          "type": "end",
+          "start": 14,
+          "end": 20,
+          "photo": "01_SOURCE_PHOTOS/hall_vertical_01.webp",
+          "kb": [
+            [
+              0.34,
+              0.5,
+              1.05
+            ],
+            [
+              0.34,
+              0.5,
+              1.1
+            ]
+          ],
+          "grade": "warm",
+          "blur": 18,
+          "shade": [
+            0.2,
+            0.3,
+            0.36
+          ],
+          "embers": 0.7
+        }
+      ]
+    },
+    "Story": {
+      "duration": 15,
+      "scenes": [
+        {
+          "type": "intro",
+          "start": 0,
+          "end": 2.5,
+          "photo": "01_SOURCE_PHOTOS/hall_vertical_01.webp",
+          "kb": [
+            [
+              0.33,
+              0.56,
+              1.0
+            ],
+            [
+              0.35,
+              0.53,
+              1.12
+            ]
+          ],
+          "grade": "warm",
+          "shade": [
+            0.4,
+            0.5,
+            0.5
+          ],
+          "embers": 0.6
+        },
+        {
+          "type": "lines",
+          "start": 2.5,
+          "end": 5,
+          "cy": 560,
+          "photo": "01_SOURCE_PHOTOS/presenter_girl_01.jpg",
+          "kb": [
+            [
+              0.52,
+              0.52,
+              1.0
+            ],
+            [
+              0.56,
+              0.53,
+              1.1
+            ]
+          ],
+          "grade": "skin",
+          "shade": [
+            0.75,
+            0.35,
+            1.0
+          ],
+          "embers": 0.25,
+          "lines": [
+            [
+              [
+                "Мехоҳед",
+                "w"
+              ],
+              [
+                "таоми",
+                "w"
+              ]
+            ],
+            [
+              [
+                "болаззатро",
+                "gold",
+                112
+              ]
+            ],
+            [
+              [
+                "бичашед?",
+                "w"
+              ]
+            ]
+          ],
+          "panel": true
+        },
+        {
+          "type": "lines",
+          "start": 5,
+          "end": 7.5,
+          "cy": 1290,
+          "photo": "01_SOURCE_PHOTOS/hall_wide_01.webp",
+          "kb": [
+            [
+              0.3,
+              0.52,
+              1.0
+            ],
+            [
+              0.6,
+              0.5,
+              1.06
+            ]
+          ],
+          "grade": "warm",
+          "shade": [
+            0.35,
+            0.8,
+            0.95
+          ],
+          "embers": 0.35,
+          "lines": [
+            [
+              [
+                "Пас ба",
+                "w"
+              ]
+            ],
+            [
+              [
+                "ШОМИ КУЛОБ",
+                "gold",
+                110
+              ]
+            ],
+            [
+              [
+                "хуш омадед!",
+                "w"
+              ]
+            ]
+          ],
+          "panel": true
+        },
+        {
+          "type": "lines",
+          "start": 7.5,
+          "end": 10,
+          "cy": 560,
+          "photo": "01_SOURCE_PHOTOS/presenter_girl_01.jpg",
+          "kb": [
+            [
+              0.58,
+              0.52,
+              1.18
+            ],
+            [
+              0.54,
+              0.52,
+              1.03
+            ]
+          ],
+          "grade": "skin",
+          "shade": [
+            0.75,
+            0.35,
+            1.0
+          ],
+          "embers": 0.25,
+          "lines": [
+            [
+              [
+                "Таъми",
+                "w"
+              ],
+              [
+                "беҳамто",
+                "gold"
+              ]
+            ],
+            [
+              [
+                "ва сифати",
+                "w"
+              ],
+              [
+                "баланд!",
+                "gold"
+              ]
+            ]
+          ],
+          "panel": true
+        },
+        {
+          "type": "end",
+          "start": 10,
+          "end": 15,
+          "photo": "01_SOURCE_PHOTOS/hall_vertical_01.webp",
+          "kb": [
+            [
+              0.34,
+              0.5,
+              1.05
+            ],
+            [
+              0.34,
+              0.5,
+              1.1
+            ]
+          ],
+          "grade": "warm",
+          "blur": 18,
+          "shade": [
+            0.2,
+            0.3,
+            0.36
+          ],
+          "embers": 0.7
+        }
+      ]
+    }
+  }
+}
