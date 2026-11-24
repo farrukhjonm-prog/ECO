@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-24",
+  "name": "Brand-ShomiKulob",
+  "concept": "Dark premium / luxury brand film: warm ember-lit black, gold typography, kinetic text, beat-locked light-streak cuts. No dish names, prices or food imagery are shown because none have been supplied/verified yet.",
+  "style": "dark_luxury",
+  "bpm": 120,
+  "seed": 1124,
+  "caption": "ШОМИ КУЛОБ 🔥\n\nМехоҳед таоми болаззатро бичашед? Пас ба ШОМИ КУЛОБ хуш омадед!\nТаъми беҳамто ва сифати баланд.\n\n📞 Ҳамин ҳоло фармоиш диҳед: +992 934 41 41 41\n📍 Instagram: @shomi_kulob_restourant\n\n#ШомиКулоб #shomi_kulob_restourant #Кулоб #Kulob #Тоҷикистон #Tajikistan #тарабхона #ресторан #таом #ғизо #food #restaurant #foodie #kulobfood #reels",
+  "variants": {
+    "Reels": {
+      "duration": 20,
+      "scenes": [
+        {"type": "intro", "start": 0, "end": 3},
+        {"type": "brandbug", "start": 3, "end": 14},
+        {"type": "lines", "start": 3, "end": 7, "lines": [[["Мехоҳед", "w"], ["таоми", "w"]], [["болаззатро", "gold", 124]], [["бичашед?", "w"]]]},
+        {"type": "lines", "start": 7, "end": 10, "lines": [[["Пас ба", "w"]], [["ШОМИ КУЛОБ", "gold", 118]], [["хуш омадед!", "w"]]]},
+        {"type": "lines", "start": 10, "end": 14, "lines": [[["Таъми", "w"], ["беҳамто", "gold"]], [["ва сифати", "w"]], [["баланд!", "gold", 124]]]},
+        {"type": "end", "start": 14, "end": 20}
+      ]
+    },
+    "Story": {
+      "duration": 15,
+      "scenes": [
+        {"type": "intro", "start": 0, "end": 2},
+        {"type": "brandbug", "start": 2, "end": 10},
+        {"type": "lines", "start": 2, "end": 5, "lines": [[["Мехоҳед", "w"], ["таоми", "w"]], [["болаззатро", "gold", 124]], [["бичашед?", "w"]]]},
+        {"type": "lines", "start": 5, "end": 7.5, "lines": [[["Пас ба", "w"]], [["ШОМИ КУЛОБ", "gold", 118]], [["хуш омадед!", "w"]]]},
+        {"type": "lines", "start": 7.5, "end": 10, "lines": [[["Таъми", "w"], ["беҳамто", "gold"]], [["ва сифати", "w"]], [["баланд!", "gold", 124]]]},
+        {"type": "end", "start": 10, "end": 15}
+      ]
+    }
+  }
+}
