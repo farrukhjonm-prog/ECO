@@ -88,7 +88,8 @@ def dish(els, sc, s):
     """One menu item: name, cut-out photo with steam, price badge."""
     t0, t1 = sc["start"], sc["end"]
     c = sc["cut"]
-    img = cutout.dish_cutout(ROOT / c["src"], c["box"], c["ellipse"], int(c.get("w", 1000) * s))
+    img = cutout.dish_cutout(ROOT / c["src"], c["box"], c["ellipse"], int(c.get("w", 1000) * s),
+                             core=c.get("core", 0.75), wmin=c.get("wmin", 225))
     tex = steam_texture(int(600 * s), int(420 * s), s, seed=int(t0 * 10))
     els.append(dict(img=tex, cx=540, cy=c.get("steam_cy", 700), t0=t0 + 0.4, t1=t1 - 0.3,
                     anim="steam", din=0.8, h=int(420 * s)))

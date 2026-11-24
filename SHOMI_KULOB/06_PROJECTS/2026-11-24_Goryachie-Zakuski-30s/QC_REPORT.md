@@ -5,7 +5,7 @@
 - audio: aac 48000 Hz 2ch
 - duration: 32.00s (target 32s)
 - loudness: -13.7 LUFS integrated, true peak -1.8 dBFS
-- size: 50.0 MB
+- size: 50.1 MB
 - RESULT: PASS
 
 ## 2026-11-24_Goryachie-Zakuski-30s_Reels_MASTER_1920p.mp4
@@ -13,7 +13,7 @@
 - audio: aac 48000 Hz 2ch
 - duration: 32.00s (target 32s)
 - loudness: -13.7 LUFS integrated, true peak -2.5 dBFS
-- size: 98.9 MB
+- size: 99.4 MB
 - RESULT: PASS
 
 ## Story: identical copy of Reels

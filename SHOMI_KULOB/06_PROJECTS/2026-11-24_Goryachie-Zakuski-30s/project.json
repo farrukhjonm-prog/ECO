@@ -1,7 +1,7 @@
 {
   "date": "2026-11-24",
   "name": "Goryachie-Zakuski-30s",
-  "concept": "Dark BBQ fast-food promo for the 'ГОРЯЧИЕ ЗАКУСКИ' menu: official logo intro, Tajik hook, four dish cards cut out from the official menu with rising steam, beat-synced slide-ins and price badges, official-logo contact end screen. Dish names, portions and prices copied verbatim from 04_MENU/menu_goryachie_zakuski_01.jpg. 30+ s version: each dish gets its own 5 s segment (close-up hero shot with name, pull back to full plate, then price badge).",
+  "concept": "Dark BBQ fast-food promo for the 'ГОРЯЧИЕ ЗАКУСКИ' menu: official logo intro, Tajik hook, four dish cards cut out from the official menu with rising steam, beat-synced slide-ins and price badges, official-logo contact end screen. Dish names, portions and prices copied verbatim from 04_MENU/menu_goryachie_zakuski_01.jpg. 30+ s version: each dish gets its own 5 s segment (close-up hero shot with name, pull back to full plate, then price badge). Dish plates that the menu image cut off at its right edge were completed with Adobe Firefly generative expand (assets/dish_*_full_firefly.png); the original menu pixels are unchanged.",
   "source_check": {
     "menu": "04_MENU/menu_goryachie_zakuski_01.jpg",
     "items": [
@@ -101,25 +101,25 @@
             "currency": "СОМОНИ"
           },
           "cut": {
-            "src": "04_MENU/menu_goryachie_zakuski_01.jpg",
+            "src": "06_PROJECTS/2026-11-24_Goryachie-Zakuski-30s/assets/dish_wings_full_firefly.png",
             "box": [
-              560,
-              350,
-              960,
-              585
+              60,
+              0,
+              850,
+              512
             ],
             "ellipse": [
-              0.56,
-              0.55,
               0.5,
-              0.47
+              0.52,
+              0.53,
+              0.53
             ],
-            "w": 1000,
+            "w": 940,
             "cy": 930,
-            "steam_cy": 650
-          },
-          "hero": 2.2,
-          "zoom0": 1.35
+            "steam_cy": 650,
+            "core": 0.55,
+            "wmin": 210
+          }
         },
         {
           "type": "dish",
@@ -135,25 +135,25 @@
             "currency": "СОМОНИ"
           },
           "cut": {
-            "src": "04_MENU/menu_goryachie_zakuski_01.jpg",
+            "src": "06_PROJECTS/2026-11-24_Goryachie-Zakuski-30s/assets/dish_nuggets_full_firefly.png",
             "box": [
-              555,
-              585,
-              960,
-              785
+              0,
+              8,
+              840,
+              415
             ],
             "ellipse": [
-              0.55,
-              0.56,
-              0.48,
-              0.44
+              0.5,
+              0.5,
+              0.52,
+              0.54
             ],
-            "w": 1000,
+            "w": 940,
             "cy": 930,
-            "steam_cy": 650
-          },
-          "hero": 2.2,
-          "zoom0": 1.35
+            "steam_cy": 650,
+            "core": 0.55,
+            "wmin": 210
+          }
         },
         {
           "type": "dish",
@@ -169,25 +169,25 @@
             "currency": "СОМОНИ"
           },
           "cut": {
-            "src": "04_MENU/menu_goryachie_zakuski_01.jpg",
+            "src": "06_PROJECTS/2026-11-24_Goryachie-Zakuski-30s/assets/dish_fries_full_firefly.png",
             "box": [
-              510,
-              770,
-              960,
-              990
+              120,
+              10,
+              880,
+              420
             ],
             "ellipse": [
               0.5,
-              0.47,
-              0.52,
-              0.42
+              0.5,
+              0.53,
+              0.52
             ],
-            "w": 1000,
+            "w": 940,
             "cy": 930,
-            "steam_cy": 650
-          },
-          "hero": 2.2,
-          "zoom0": 1.35
+            "steam_cy": 650,
+            "core": 0.55,
+            "wmin": 210
+          }
         },
         {
           "type": "dish",
@@ -204,25 +204,25 @@
             "currency": "СОМОНИ"
           },
           "cut": {
-            "src": "04_MENU/menu_goryachie_zakuski_01.jpg",
+            "src": "06_PROJECTS/2026-11-24_Goryachie-Zakuski-30s/assets/dish_wedges_full_firefly.png",
             "box": [
-              540,
-              975,
-              960,
-              1190
+              40,
+              10,
+              910,
+              480
             ],
             "ellipse": [
-              0.55,
-              0.56,
               0.5,
-              0.44
+              0.52,
+              0.52,
+              0.52
             ],
-            "w": 1000,
+            "w": 940,
             "cy": 930,
-            "steam_cy": 650
-          },
-          "hero": 2.2,
-          "zoom0": 1.35
+            "steam_cy": 650,
+            "core": 0.55,
+            "wmin": 210
+          }
         },
         {
           "type": "end",
@@ -300,25 +300,25 @@
             "currency": "СОМОНИ"
           },
           "cut": {
-            "src": "04_MENU/menu_goryachie_zakuski_01.jpg",
+            "src": "06_PROJECTS/2026-11-24_Goryachie-Zakuski-30s/assets/dish_wings_full_firefly.png",
             "box": [
-              560,
-              350,
-              960,
-              585
+              60,
+              0,
+              850,
+              512
             ],
             "ellipse": [
-              0.56,
-              0.55,
               0.5,
-              0.47
+              0.52,
+              0.53,
+              0.53
             ],
-            "w": 1000,
+            "w": 940,
             "cy": 930,
-            "steam_cy": 650
-          },
-          "hero": 2.2,
-          "zoom0": 1.35
+            "steam_cy": 650,
+            "core": 0.55,
+            "wmin": 210
+          }
         },
         {
           "type": "dish",
@@ -334,25 +334,25 @@
             "currency": "СОМОНИ"
           },
           "cut": {
-            "src": "04_MENU/menu_goryachie_zakuski_01.jpg",
+            "src": "06_PROJECTS/2026-11-24_Goryachie-Zakuski-30s/assets/dish_nuggets_full_firefly.png",
             "box": [
-              555,
-              585,
-              960,
-              785
+              0,
+              8,
+              840,
+              415
             ],
             "ellipse": [
-              0.55,
-              0.56,
-              0.48,
-              0.44
+              0.5,
+              0.5,
+              0.52,
+              0.54
             ],
-            "w": 1000,
+            "w": 940,
             "cy": 930,
-            "steam_cy": 650
-          },
-          "hero": 2.2,
-          "zoom0": 1.35
+            "steam_cy": 650,
+            "core": 0.55,
+            "wmin": 210
+          }
         },
         {
           "type": "dish",
@@ -368,25 +368,25 @@
             "currency": "СОМОНИ"
           },
           "cut": {
-            "src": "04_MENU/menu_goryachie_zakuski_01.jpg",
+            "src": "06_PROJECTS/2026-11-24_Goryachie-Zakuski-30s/assets/dish_fries_full_firefly.png",
             "box": [
-              510,
-              770,
-              960,
-              990
+              120,
+              10,
+              880,
+              420
             ],
             "ellipse": [
               0.5,
-              0.47,
-              0.52,
-              0.42
+              0.5,
+              0.53,
+              0.52
             ],
-            "w": 1000,
+            "w": 940,
             "cy": 930,
-            "steam_cy": 650
-          },
-          "hero": 2.2,
-          "zoom0": 1.35
+            "steam_cy": 650,
+            "core": 0.55,
+            "wmin": 210
+          }
         },
         {
           "type": "dish",
@@ -403,25 +403,25 @@
             "currency": "СОМОНИ"
           },
           "cut": {
-            "src": "04_MENU/menu_goryachie_zakuski_01.jpg",
+            "src": "06_PROJECTS/2026-11-24_Goryachie-Zakuski-30s/assets/dish_wedges_full_firefly.png",
             "box": [
-              540,
-              975,
-              960,
-              1190
+              40,
+              10,
+              910,
+              480
             ],
             "ellipse": [
-              0.55,
-              0.56,
               0.5,
-              0.44
+              0.52,
+              0.52,
+              0.52
             ],
-            "w": 1000,
+            "w": 940,
             "cy": 930,
-            "steam_cy": 650
-          },
-          "hero": 2.2,
-          "zoom0": 1.35
+            "steam_cy": 650,
+            "core": 0.55,
+            "wmin": 210
+          }
         },
         {
           "type": "end",

@@ -46,7 +46,7 @@ def logo_cutout(path, tol=28):
     return out.crop(out.getbbox())
 
 
-def dish_cutout(path, box, ellipse, width, feather=0.10, sharpen=True):
+def dish_cutout(path, box, ellipse, width, feather=0.10, sharpen=True, core=0.75, wmin=225):
     """Cut one dish out of a menu image.
 
     box     -- (x0, y0, x1, y1) crop in source pixels
@@ -66,8 +66,8 @@ def dish_cutout(path, box, ellipse, width, feather=0.10, sharpen=True):
     m = np.clip((1.0 - d) / feather, 0, 1)
     # Key out pure white menu paper, but only outside the protected core.
     a = np.asarray(img).astype(np.float32)
-    whiteness = np.clip((a.min(-1) - 225) / 25, 0, 1) * (a.max(-1) - a.min(-1) < 25)
-    m *= 1 - whiteness * (d > 0.75)
+    whiteness = np.clip((a.min(-1) - wmin) / 25, 0, 1) * (a.max(-1) - a.min(-1) < 25)
+    m *= 1 - whiteness * (d > core)
     # Feather any side where the matte touches the crop edge.
     edge = np.minimum.reduce([xx / W, (W - xx) / W, yy / H, (H - yy) / H])
     m *= np.clip(edge / 0.07, 0, 1)
