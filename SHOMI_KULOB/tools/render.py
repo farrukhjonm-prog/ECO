@@ -19,6 +19,7 @@ from multiprocessing import Pool
 import numpy as np
 from PIL import Image
 
+import food
 import gfx
 import photo
 
@@ -85,6 +86,12 @@ def build_elements(variant, s):
             els.append(dict(img=bug, cx=540, cy=330, t0=t0, t1=t1 - 0.35, anim="fade", din=0.5))
         elif kind == "end":
             _end_screen(els, sc, s, maxw)
+        elif kind == "logo_intro":
+            food.logo_intro(els, sc, s)
+        elif kind == "dish":
+            food.dish(els, sc, s)
+        elif kind == "strip":
+            food.strip(els, sc, s)
     return els
 
 
@@ -92,15 +99,20 @@ def _end_screen(els, sc, s, maxw):
     """Final branded contact screen (settles within 1 s, then stationary)."""
     t0, t1 = sc["start"], sc["end"]
     oy = sc.get("oy", 60)
-    lab = gfx.text_layer("Р Е С Т О Р А Н", gfx.font("Montserrat", 30 * s, 600), "gold", s,
-                         shadow=False)
-    els.append(dict(img=lab, cx=540, cy=400 + oy, t0=t0, t1=t1, anim="fade", din=0.5))
-    f = _fit("ШОМИ КУЛОБ", "Montserrat", 116, 900, maxw, s, 4)
-    wm = gfx.text_layer("ШОМИ КУЛОБ", f, "gold", s, tracking=4, glow=(255, 140, 40))
-    els.append(dict(img=wm, cx=540, cy=495 + oy, t0=t0, t1=t1, anim="zoom", din=0.8,
-                    shine=(t0 + 0.9, 0.9)))
-    els.append(dict(img=gfx.ornament(int(520 * s), s), cx=540, cy=595 + oy, t0=t0 + 0.2,
-                    t1=t1, anim="grow", din=0.6))
+    if sc.get("logo"):
+        lg = food.logo(sc["logo"], int(sc.get("logo_w", 400) * s))
+        els.append(dict(img=lg, cx=540, cy=sc.get("logo_cy", 470) + oy, t0=t0, t1=t1,
+                        anim="zoom", din=0.8, shine=(t0 + 0.9, 0.9)))
+    else:
+        lab = gfx.text_layer("Р Е С Т О Р А Н", gfx.font("Montserrat", 30 * s, 600), "gold", s,
+                             shadow=False)
+        els.append(dict(img=lab, cx=540, cy=400 + oy, t0=t0, t1=t1, anim="fade", din=0.5))
+        f = _fit("ШОМИ КУЛОБ", "Montserrat", 116, 900, maxw, s, 4)
+        wm = gfx.text_layer("ШОМИ КУЛОБ", f, "gold", s, tracking=4, glow=(255, 140, 40))
+        els.append(dict(img=wm, cx=540, cy=495 + oy, t0=t0, t1=t1, anim="zoom", din=0.8,
+                        shine=(t0 + 0.9, 0.9)))
+        els.append(dict(img=gfx.ornament(int(520 * s), s), cx=540, cy=595 + oy, t0=t0 + 0.2,
+                        t1=t1, anim="grow", din=0.6))
     cta = "ҲАМИН ҲОЛО ФАРМОИШ ДИҲЕД!"
     pf = _fit(cta, "Oswald", 56, 700, maxw - 100, s)
     els.append(dict(img=gfx.pill(cta, pf, s), cx=540, cy=715 + oy, t0=t0 + 0.3, t1=t1,
@@ -153,7 +165,7 @@ def _init(W, H, variant, seed):
                  sw=rng.uniform(0.01, 0.04, n), sp=rng.uniform(1.5, 4, n),
                  sz=rng.uniform(0.6, 2.2, n), br=rng.uniform(0.5, 1.0, n),
                  fl=rng.uniform(2, 6, n))
-    cuts = [sc["start"] for sc in variant["scenes"] if sc["type"] != "brandbug"
+    cuts = [sc["start"] for sc in variant["scenes"] if sc["type"] not in ("brandbug", "strip")
             and sc["start"] > 0]
     els = build_elements(variant, s)
     frame = Image.new("RGBA", (W, H), (0, 0, 0, 0))
@@ -251,6 +263,7 @@ def _place(frame, el, t):
         return
     p = (t - t0) / din
     a, dy, sc = 1.0, 0.0, 1.0
+    dx_slide = 0.0
     img = el["img"]
     anim = el["anim"]
     if anim == "fade":
@@ -264,6 +277,16 @@ def _place(frame, el, t):
         e = gfx.ease_out_cubic(p)
         w = max(1, int(img.width * e))
         img = img.crop(((img.width - w) // 2, 0, (img.width + w) // 2, img.height))
+    elif anim == "slide":
+        e = gfx.ease_out_cubic(p)
+        a = min(1.0, p * 2)
+        sc = (0.86 + 0.14 * e) * (1 + el.get("push", 0) * max(0.0, t - t0))
+        dx_slide = (1 - e) * 620 * s
+    elif anim == "steam":
+        a = gfx.ease_in_out_sine(p) * 0.9
+        hh = el["h"]
+        off = int((t * 60 * s) % (img.height - hh))
+        img = img.crop((0, img.height - hh - off, img.width, img.height - off))
     elif anim == "pulse":
         cyc = ((t - t0) % din) / din
         a, sc = 0.7 * (1 - cyc) ** 1.5, 1.0 + 0.55 * gfx.ease_out_cubic(cyc)
@@ -278,7 +301,7 @@ def _place(frame, el, t):
     if sc != 1.0:
         img = img.resize((max(1, int(img.width * sc)), max(1, int(img.height * sc))),
                          Image.BICUBIC)
-    x = int(el["cx"] * s - img.width / 2)
+    x = int(el["cx"] * s - img.width / 2 + dx_slide)
     y = int(el["cy"] * s - img.height / 2 + dy)
     if anim == "rise":
         e = gfx.ease_out_cubic(p)

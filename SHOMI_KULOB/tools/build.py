@@ -52,6 +52,9 @@ def srt(variant):
     for sc in variant["scenes"]:
         if sc["type"] == "lines":
             txt = "\n".join(" ".join(r[0] for r in line) for line in sc["lines"])
+        elif sc["type"] == "dish":
+            p = sc["price"]
+            txt = " ".join(sc["name"]) + f"\n{p['portion']} — {p['amount']} {p['currency']}"
         elif sc["type"] == "end":
             txt = "ШОМИ КУЛОБ — ҲАМИН ҲОЛО ФАРМОИШ ДИҲЕД!\n+992 934 41 41 41 · @shomi_kulob_restourant"
         else:
@@ -77,7 +80,7 @@ def build(project_path, preview=False):
         with tempfile.TemporaryDirectory() as td:
             td = Path(td)
             cuts = [sc["start"] for sc in var["scenes"]
-                    if sc["type"] in ("lines", "end") and sc["start"] > 0]
+                    if sc["type"] not in ("brandbug", "strip") and sc["start"] > 0]
             end = next(sc["start"] for sc in var["scenes"] if sc["type"] == "end")
             wav = td / "music.wav"
             music.render_music(wav, var["duration"], cuts, end, seed=proj["seed"],
