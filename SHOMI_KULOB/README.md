@@ -31,8 +31,9 @@ A `project.json` describes each variant (`Reels`, `Story`) as a timed list of sc
 - `lines`: kinetic text; each run is `[text, colour, optional size]`, with colour `w`, `gold` or `red`
 - `brandbug`: small brand name at the top
 
-Any scene can also take a background photo (`photo`, `kb` camera move, `grade`, `shade`, `blur`, `embers`; see `tools/photo.py`). Consecutive photo scenes cross with a beat-synced zoom dissolve. Add `"panel": true` to a `lines` scene to place a soft dark card behind the text over busy photos. Faces are only scaled and cropped, never reshaped or retouched.
 - `end`: the fixed contact screen (ШОМИ КУЛОБ, ҲАМИН ҲОЛО ФАРМОИШ ДИҲЕД!, the phone number and @shomi_kulob_restourant). It settles within 1 s and then stays still for at least 4 s.
+
+Any scene can also take a background photo (`photo`, `kb` camera move, `grade`, `shade`, `blur`, `embers`; see `tools/photo.py`). Consecutive photo scenes cross with a beat-synced zoom dissolve. Add `"panel": true` to a `lines` scene to place a soft dark card behind the text over busy photos. Faces are only scaled and cropped, never reshaped or retouched.
 
 Scene starts are placed on the 120 BPM beat grid (every 0.5 s). The music generator adds a whoosh on every cut and a riser and impact into the end screen.
 
